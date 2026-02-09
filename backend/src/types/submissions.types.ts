@@ -1,4 +1,9 @@
-export type SubmissionStatus = "Pendente" | "Em Análise" | "Aprovada" | "Rejeitada";
+export type SubmissionStatus =
+  | "Pendente"
+  | "Aguardando"
+  | "Integrando"
+  | "Concluido"
+  | "Rejeitado";
 type Optional<T> = T | undefined;
 
 export interface SubmissionInput {
@@ -34,4 +39,7 @@ export interface SubmissionUpdateInput {
   sandboxKeys?: Optional<string>;
   productionAccount?: Optional<string | null>;
   status?: Optional<SubmissionStatus>;
+  approvedAt?: Optional<string | null>;
+  integrandoAt?: Optional<string | null>;
+  concluidoAt?: Optional<string | null>;
 }

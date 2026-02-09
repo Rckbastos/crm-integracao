@@ -561,24 +561,32 @@
             <div class="logo-text">Pegasus Admin</div>
         </div>
 
-        <div class="nav-item active">
+        <div class="nav-item active" data-status="Pendente" onclick="filterByMenuStatus('Pendente', this)">
             <span>📋</span>
             <span>Solicitações</span>
             <span class="badge" id="pendingCount">0</span>
         </div>
-        <div class="nav-item">
-            <span>✅</span>
-            <span>Aprovadas</span>
+        <div class="nav-item" data-status="Aguardando" onclick="filterByMenuStatus('Aguardando', this)">
+            <span>⏳</span>
+            <span>Aguardando</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-status="Integrando" onclick="filterByMenuStatus('Integrando', this)">
+            <span>🛠️</span>
+            <span>Integrando</span>
+        </div>
+        <div class="nav-item" data-status="Concluido" onclick="filterByMenuStatus('Concluido', this)">
+            <span>✅</span>
+            <span>Concluído</span>
+        </div>
+        <div class="nav-item" data-status="Rejeitado" onclick="filterByMenuStatus('Rejeitado', this)">
             <span>❌</span>
             <span>Rejeitadas</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-view="stats" onclick="showStats(this)">
             <span>📊</span>
             <span>Estatísticas</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-view="settings" onclick="showSettings(this)">
             <span>⚙️</span>
             <span>Configurações</span>
         </div>
@@ -604,7 +612,7 @@
         </div>
 
         <!-- Stats -->
-        <div class="stats-grid">
+        <div class="stats-grid" id="statsGrid">
             <div class="stat-card">
                 <div class="stat-icon" style="background: rgba(251, 191, 36, 0.2);">
                     <span>⏳</span>
@@ -615,18 +623,18 @@
 
             <div class="stat-card">
                 <div class="stat-icon" style="background: rgba(59, 130, 246, 0.2);">
-                    <span>🔍</span>
+                    <span>🛠️</span>
                 </div>
-                <div class="stat-value" id="statAnalyzing">0</div>
-                <div class="stat-label">Em Análise</div>
+                <div class="stat-value" id="statIntegrating">0</div>
+                <div class="stat-label">Integrando</div>
             </div>
 
             <div class="stat-card">
                 <div class="stat-icon" style="background: rgba(74, 222, 128, 0.2);">
                     <span>✅</span>
                 </div>
-                <div class="stat-value" id="statApproved">0</div>
-                <div class="stat-label">Aprovadas</div>
+                <div class="stat-value" id="statCompleted">0</div>
+                <div class="stat-label">Concluído</div>
             </div>
 
             <div class="stat-card">
@@ -634,7 +642,17 @@
                     <span>❌</span>
                 </div>
                 <div class="stat-value" id="statRejected">0</div>
-                <div class="stat-label">Rejeitadas</div>
+                <div class="stat-label">Rejeitado</div>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsExtra" style="display: none; margin-bottom: 30px;">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(181, 164, 114, 0.2);">
+                    <span>⏱️</span>
+                </div>
+                <div class="stat-value" id="statAvgTime">0h</div>
+                <div class="stat-label">Tempo Médio (Integrando → Concluído)</div>
             </div>
         </div>
 
@@ -645,9 +663,10 @@
                 <select id="filterStatus" onchange="filterRequests()">
                     <option value="">Todos</option>
                     <option value="Pendente">Pendente</option>
-                    <option value="Em Análise">Em Análise</option>
-                    <option value="Aprovada">Aprovada</option>
-                    <option value="Rejeitada">Rejeitada</option>
+                    <option value="Aguardando">Aguardando</option>
+                    <option value="Integrando">Integrando</option>
+                    <option value="Concluido">Concluído</option>
+                    <option value="Rejeitado">Rejeitado</option>
                 </select>
             </div>
 
@@ -717,6 +736,17 @@
             return String(text).replace(/[&<>"']/g, m => map[m]);
         }
 
+        function formatStatus(status) {
+            const map = {
+                Pendente: 'Pendente',
+                Aguardando: 'Aguardando',
+                Integrando: 'Integrando',
+                Concluido: 'Concluído',
+                Rejeitado: 'Rejeitado'
+            };
+            return map[status] || status;
+        }
+
         let allRequests = [];
         const getApiBase = () => {
             const hostname = window.location.hostname;
@@ -770,16 +800,29 @@
         function updateStats() {
             const stats = {
                 pending: allRequests.filter(r => r.status === 'Pendente').length,
-                analyzing: allRequests.filter(r => r.status === 'Em Análise').length,
-                approved: allRequests.filter(r => r.status === 'Aprovada').length,
-                rejected: allRequests.filter(r => r.status === 'Rejeitada').length
+                integrating: allRequests.filter(r => r.status === 'Integrando').length,
+                completed: allRequests.filter(r => r.status === 'Concluido').length,
+                rejected: allRequests.filter(r => r.status === 'Rejeitado').length
             };
 
             document.getElementById('statPending').textContent = stats.pending;
-            document.getElementById('statAnalyzing').textContent = stats.analyzing;
-            document.getElementById('statApproved').textContent = stats.approved;
+            document.getElementById('statIntegrating').textContent = stats.integrating;
+            document.getElementById('statCompleted').textContent = stats.completed;
             document.getElementById('statRejected').textContent = stats.rejected;
             document.getElementById('pendingCount').textContent = stats.pending;
+
+            const durations = allRequests
+                .filter(r => r.integrandoAt && r.concluidoAt)
+                .map(r => new Date(r.concluidoAt) - new Date(r.integrandoAt))
+                .filter(ms => ms > 0);
+
+            if (durations.length > 0) {
+                const avgMs = durations.reduce((a, b) => a + b, 0) / durations.length;
+                const hours = Math.round((avgMs / 3600000) * 10) / 10;
+                document.getElementById('statAvgTime').textContent = `${hours}h`;
+            } else {
+                document.getElementById('statAvgTime').textContent = '0h';
+            }
         }
 
         function renderTable(requests) {
@@ -798,9 +841,10 @@
                 const date = new Date(req.createdAt);
                 const statusClass = {
                     'Pendente': 'status-pending',
-                    'Em Análise': 'status-analyzing',
-                    'Aprovada': 'status-approved',
-                    'Rejeitada': 'status-rejected'
+                    'Aguardando': 'status-pending',
+                    'Integrando': 'status-analyzing',
+                    'Concluido': 'status-approved',
+                    'Rejeitado': 'status-rejected'
                 }[req.status] || 'status-pending';
 
                 return `
@@ -824,18 +868,28 @@
                             <div style="font-size: 12px; color: #999;">${escapeHtml(req.developerEmail)}</div>
                         </td>
                         <td>${date.toLocaleDateString('pt-BR')}</td>
-                        <td><span class="status-badge ${statusClass}">${escapeHtml(req.status)}</span></td>
+                        <td><span class="status-badge ${statusClass}">${escapeHtml(formatStatus(req.status))}</span></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-icon btn-view" onclick="viewDetails('${req.id}')" title="Ver Detalhes">
                                     👁️
                                 </button>
                                 ${req.status === 'Pendente' ? `
-                                    <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Aprovada')" title="Aprovar">
+                                    <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Aguardando')" title="Aprovar">
                                         ✅
                                     </button>
-                                    <button class="btn-icon btn-reject" onclick="updateStatus('${req.id}', 'Rejeitada')" title="Rejeitar">
+                                    <button class="btn-icon btn-reject" onclick="updateStatus('${req.id}', 'Rejeitado')" title="Rejeitar">
                                         ❌
+                                    </button>
+                                ` : ''}
+                                ${req.status === 'Aguardando' ? `
+                                    <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Integrando')" title="Iniciar Integração">
+                                        🛠️
+                                    </button>
+                                ` : ''}
+                                ${req.status === 'Integrando' ? `
+                                    <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Concluido')" title="Concluir">
+                                        ✅
                                     </button>
                                 ` : ''}
                             </div>
@@ -934,11 +988,22 @@
 
                 <div style="display: flex; gap: 12px; margin-top: 30px;">
                     ${request.status === 'Pendente' ? `
-                        <button class="btn btn-primary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Aprovada'); closeModal();">
+                        <button class="btn btn-primary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Aguardando'); closeModal();">
                             ✅ Aprovar Integração
                         </button>
-                        <button class="btn btn-secondary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Rejeitada'); closeModal();">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Rejeitado'); closeModal();">
                             ❌ Rejeitar
+                        </button>
+                    ` : request.status === 'Aguardando' ? `
+                        <button class="btn btn-primary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Integrando'); closeModal();">
+                            🛠️ Iniciar Integração
+                        </button>
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Rejeitado'); closeModal();">
+                            ❌ Rejeitar
+                        </button>
+                    ` : request.status === 'Integrando' ? `
+                        <button class="btn btn-primary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Concluido'); closeModal();">
+                            ✅ Concluir
                         </button>
                     ` : `
                         <button class="btn btn-primary" style="flex: 1;" onclick="closeModal();">
@@ -988,6 +1053,41 @@
                 filters.search = searchTerm;
             }
             loadRequests(filters, dateFilter);
+        }
+
+        function setActiveNav(el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function filterByMenuStatus(status, el) {
+            setActiveNav(el);
+            document.getElementById('statsExtra').style.display = 'none';
+            document.getElementById('statsGrid').style.display = 'grid';
+            document.getElementById('filterStatus').value = status;
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterDate').value = '';
+            loadRequests({ status });
+        }
+
+        function showStats(el) {
+            setActiveNav(el);
+            document.getElementById('statsExtra').style.display = 'grid';
+            document.getElementById('statsGrid').style.display = 'grid';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterDate').value = '';
+            loadRequests();
+        }
+
+        function showSettings(el) {
+            setActiveNav(el);
+            document.getElementById('statsExtra').style.display = 'none';
+            document.getElementById('statsGrid').style.display = 'grid';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterDate').value = '';
+            loadRequests();
         }
 
         async function refreshData() {

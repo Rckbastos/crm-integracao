@@ -46,6 +46,8 @@ export const updateSubmissionSchema = z
     paymentMethods: z.array(z.string().min(1)).min(1).optional(),
     sandboxKeys: z.string().min(1).optional(),
     productionAccount: z.string().nullable().optional(),
-    status: z.enum(["Pendente", "Em Análise", "Aprovada", "Rejeitada"]).optional(),
+    status: z
+      .enum(["Pendente", "Aguardando", "Integrando", "Concluido", "Rejeitado"])
+      .optional(),
   })
   .strict();

@@ -25,6 +25,9 @@ model Submission {
   sandbox_keys       String
   production_account String?
   status             String   @default("Pendente")
+  approved_at        DateTime?
+  integrando_at      DateTime?
+  concluido_at       DateTime?
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
   deleted_at         DateTime?

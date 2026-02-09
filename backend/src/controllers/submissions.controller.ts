@@ -30,6 +30,9 @@ function mapSubmissionResponse(submission: any) {
     sandboxKeys: submission.sandbox_keys,
     productionAccount: submission.production_account,
     status: submission.status,
+    approvedAt: submission.approved_at,
+    integrandoAt: submission.integrando_at,
+    concluidoAt: submission.concluido_at,
     createdAt: submission.created_at,
     updatedAt: submission.updated_at,
   };

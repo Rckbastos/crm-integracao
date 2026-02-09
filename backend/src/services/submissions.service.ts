@@ -46,6 +46,15 @@ function mapUpdateData(input: SubmissionUpdateInput) {
     data.production_account = input.productionAccount;
   }
   if (input.status !== undefined) data.status = input.status;
+  if (input.approvedAt !== undefined) {
+    data.approved_at = input.approvedAt ? new Date(input.approvedAt) : null;
+  }
+  if (input.integrandoAt !== undefined) {
+    data.integrando_at = input.integrandoAt ? new Date(input.integrandoAt) : null;
+  }
+  if (input.concluidoAt !== undefined) {
+    data.concluido_at = input.concluidoAt ? new Date(input.concluidoAt) : null;
+  }
 
   return data;
 }
@@ -122,6 +131,17 @@ export async function getSubmissionById(id: string) {
 }
 
 export async function updateSubmission(id: string, input: SubmissionUpdateInput) {
+  if (input.status) {
+    if (input.status === "Aguardando") {
+      input = { ...input, approvedAt: new Date().toISOString() };
+    }
+    if (input.status === "Integrando") {
+      input = { ...input, integrandoAt: new Date().toISOString() };
+    }
+    if (input.status === "Concluido") {
+      input = { ...input, concluidoAt: new Date().toISOString() };
+    }
+  }
   const data = mapUpdateData(input);
   return prisma.submission.updateMany({
     where: {
