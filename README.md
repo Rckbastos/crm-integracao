@@ -8,10 +8,8 @@ Sistema completo para gerenciar solicitações de integração de gateways de pa
 
 ```
 pegasus-integration-system/
-├── index.html                          # Formulário público
-├── admin.html                          # Painel administrativo
-├── backend/                            # API Node.js + Prisma
-├── pegasus-logo.jpg                    # Logo oficial do Pegasus
+├── backend/                            # API Node.js + Prisma + arquivos estáticos
+│   └── public/                         # index.html, admin.html, pegasus-logo.jpg
 └── README.md                           # Este arquivo
 ```
 
@@ -19,7 +17,7 @@ pegasus-integration-system/
 
 ## 🌐 **ESTRUTURA DO SISTEMA**
 
-### **1. Formulário Público (`index.html`)**
+### **1. Formulário Público (`/`)**
 - Página para interessados solicitarem integração
 - Campos completos de gateway, responsável, desenvolvedor
 - Upload de logo e documentação
@@ -27,7 +25,7 @@ pegasus-integration-system/
 - Validação de campos obrigatórios
 - Dados salvos no banco PostgreSQL via API
 
-### **2. Painel Administrativo (`admin.html`)**
+### **2. Painel Administrativo (`/admin`)**
 - Dashboard com estatísticas
 - Tabela de solicitações
 - Filtros por status e data
@@ -40,41 +38,19 @@ pegasus-integration-system/
 
 ## 🚀 **INSTALAÇÃO**
 
-### **Opção 1: Hospedagem Simples (HTML Estático)**
+### **Opção Única: Deploy Completo no Railway (Backend + Front)**
 
-1. **Faça upload dos arquivos para seu servidor:**
-   ```
-   /public_html/
-   ├── index.html              (renomeie pegasus-integration-form.html)
-   ├── admin.html              (renomeie pegasus-integration-admin.html)
-   └── pegasus-logo.jpg
-   ```
+1. **O backend serve os HTMLs estáticos:**
+   - Formulário: `/`
+   - Admin: `/admin`
 
-2. **Configure os acessos:**
-   - Formulário público: `https://seudominio.com/`
-   - Painel admin: `https://seudominio.com/admin.html`
+2. **Faça o deploy do repositório no Railway**
 
-3. **Proteja o painel admin:**
-   - Adicione autenticação via `.htaccess` (Apache)
-   - Ou use autenticação do servidor (Nginx)
-
-### **Opção 2: Hospedagem com Subdomínios**
-
-1. **Crie 2 subdomínios:**
-   - `integracao.pegasus.com` → Formulário público
-   - `admin-integracao.pegasus.com` → Painel admin
-
-2. **Faça upload separado:**
-   - Subdomínio 1: `index.html` + `pegasus-logo.jpg`
-   - Subdomínio 2: `admin.html` + `pegasus-logo.jpg`
-
-### **Opção 3: Deploy no Manus (Recomendado)**
-
-1. **Integre no projeto React (checkout-br)**
-2. **Adicione backend com tRPC**
-3. **Salve dados no banco (MySQL/TiDB)**
-4. **Upload real de arquivos (S3)**
-5. **Autenticação com Manus OAuth**
+3. **Configure as variáveis de ambiente:**
+   - `DATABASE_URL`
+   - `PORT=3333`
+   - `NODE_ENV=production`
+   - `CORS_ORIGINS` (se usar domínios externos)
 
 ---
 
@@ -162,11 +138,9 @@ npm run dev
 ```
 
 3. Acesse:
-- Formulário: `http://localhost:3000/index.html`
-- Admin: `http://localhost:3000/admin.html`
+- Formulário: `http://localhost:3333/`
+- Admin: `http://localhost:3333/admin`
 - API: `http://localhost:3333/api/health`
-
-Observação: ajuste o `apiBase` no front se o backend não estiver em `http://localhost:3333`.
 
 ## 🚂 **DEPLOY NO RAILWAY (RESUMO)**
 
@@ -198,9 +172,7 @@ npx prisma migrate dev --name init
 
 ### 3. Após primeiro deploy
 
-- Copiar URL do backend gerado pelo Railway
-- Atualizar `API_URL` em `index.html` e `admin.html`
-- Commit e push novamente
+- A URL do Railway já serve front + API no mesmo domínio
 
 ### 4. Comandos úteis
 ```bash
