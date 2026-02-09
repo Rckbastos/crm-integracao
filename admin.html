@@ -702,7 +702,7 @@
     </div>
 
     <script>
-        window.API_URL = window.API_URL || 'https://SEU-BACKEND-RAILWAY.up.railway.app/api';
+        window.API_URL = window.API_URL || 'https://crm-integracao-production.up.railway.app/api';
     </script>
     <script>
         function escapeHtml(text) {
@@ -723,7 +723,7 @@
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
                 return 'http://localhost:3333/api';
             }
-            return 'https://SEU-BACKEND-RAILWAY.up.railway.app/api';
+            return 'https://crm-integracao-production.up.railway.app/api';
         };
         const apiBase = window.API_URL || getApiBase();
 
