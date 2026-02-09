@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pegasus Checkout - Solicitação de Integração</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: rgba(181, 164, 114, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(181, 164, 114, 0.2);
+        }
+
+        .logo {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            mix-blend-mode: lighten;
+            filter: brightness(1.2) contrast(1.1);
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #b5a472 0%, #d4c896 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #b5a472;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(181, 164, 114, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ccc;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        .priority-label {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="url"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #b5a472;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(181, 164, 114, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(181, 164, 114, 0.1);
+            border: 2px dashed rgba(181, 164, 114, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .file-upload-label:hover {
+            background: rgba(181, 164, 114, 0.15);
+            border-color: #b5a472;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #b5a472;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #b5a472;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #b5a472 0%, #d4c896 100%);
+            border: none;
+            border-radius: 12px;
+            color: #1a1a1a;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 30px rgba(181, 164, 114, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(181, 164, 114, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .help-text {
+            font-size: 13px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #4ade80;
+            text-align: center;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="/pegasus-logo.jpg" alt="Pegasus Checkout Logo">
+            </div>
+            <h1>Pegasus Checkout</h1>
+            <p class="subtitle">Solicite a integração do seu gateway de pagamento com o checkout mais avançado do mercado</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            ✅ Solicitação enviada com sucesso! Entraremos em contato em breve.
+        </div>
+
+        <form id="integrationForm" class="form-card">
+            <!-- Gateway Information -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span>💳</span>
+                    Informações do Gateway
+                </h3>
+
+                <div class="form-group">
+                    <label>Nome do Gateway <span class="required">*</span></label>
+                    <input type="text" id="gatewayName" required placeholder="Ex: MercadoPago, PagSeguro, Stripe...">
+                </div>
+
+                <div class="form-group">
+                    <label>Logo do Gateway <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <input type="file" id="gatewayLogo" accept="image/*" required>
+                        <label for="gatewayLogo" class="file-upload-label">
+                            <span>📤</span>
+                            <span>Clique para fazer upload da logo (PNG, JPG, SVG)</span>
+                        </label>
+                        <div class="file-name" id="logoFileName"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome do Whitelabel <span class="required">*</span></label>
+                    <input type="text" id="whitelabelName" required placeholder="Nome da sua marca/empresa">
+                    <p class="help-text">Nome que aparecerá no checkout para seus clientes</p>
+                </div>
+            </div>
+
+            <!-- Responsible Person -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span>👤</span>
+                    Responsável pelo Gateway
+                </h3>
+
+                <div class="form-group">
+                    <label>Nome Completo <span class="required">*</span></label>
+                    <input type="text" id="responsibleName" required placeholder="Nome completo do responsável">
+                </div>
+
+                <div class="contact-grid">
+                    <div class="form-group">
+                        <label>E-mail <span class="required">*</span></label>
+                        <input type="email" id="responsibleEmail" required placeholder="email@empresa.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefone/WhatsApp <span class="required">*</span></label>
+                        <input type="tel" id="responsiblePhone" required placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Developer Contact (Priority) -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span>👨‍💻</span>
+                    Contato do Desenvolvedor
+                    <span class="priority-label">⚠️ Prioritário</span>
+                </h3>
+
+                <div class="form-group">
+                    <label>Nome do Desenvolvedor <span class="required">*</span></label>
+                    <input type="text" id="developerName" required placeholder="Nome completo do desenvolvedor">
+                    <p class="help-text">Contato direto para evitar atrasos no prazo de integração</p>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="form-group">
+                        <label>E-mail do Desenvolvedor <span class="required">*</span></label>
+                        <input type="email" id="developerEmail" required placeholder="dev@empresa.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefone/WhatsApp <span class="required">*</span></label>
+                        <input type="tel" id="developerPhone" required placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Documentation -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span>📚</span>
+                    Documentação Técnica
+                </h3>
+
+                <div class="form-group">
+                    <label>Documentação de API <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <input type="file" id="apiDocumentation" accept=".pdf,.doc,.docx,.txt">
+                        <label for="apiDocumentation" class="file-upload-label">
+                            <span>📄</span>
+                            <span>Upload da documentação (PDF, DOC, TXT) ou cole a URL abaixo</span>
+                        </label>
+                        <div class="file-name" id="docFileName"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>URL da Documentação (alternativa ao upload)</label>
+                    <input type="url" id="apiDocUrl" placeholder="https://docs.gateway.com/api">
+                </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span>💰</span>
+                    Meios de Pagamento Suportados
+                </h3>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="pix" name="paymentMethods" value="PIX">
+                        <label for="pix">PIX</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="boleto" name="paymentMethods" value="Boleto">
+                        <label for="boleto">Boleto</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="creditCard" name="paymentMethods" value="Cartão de Crédito">
+                        <label for="creditCard">Cartão de Crédito</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="debitCard" name="paymentMethods" value="Cartão de Débito">
+                        <label for="debitCard">Cartão de Débito</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="transfer" name="paymentMethods" value="Transferência">
+                        <label for="transfer">Transferência</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="crypto" name="paymentMethods" value="Criptomoedas">
+                        <label for="crypto">Criptomoedas</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="other" name="paymentMethods" value="Outros">
+                        <label for="other">Outros</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Keys -->
+            <div class="form-section">
+                <h3 class="section-title">
+                    <span>🔑</span>
+                    Credenciais para Testes
+                </h3>
+
+                <div class="form-group">
+                    <label>Chaves de API Sandbox <span class="required">*</span></label>
+                    <textarea id="sandboxKeys" required placeholder="Cole aqui as chaves de API do ambiente de testes (Sandbox)&#10;&#10;Exemplo:&#10;API Key: sk_test_xxxxxxxxx&#10;Public Key: pk_test_xxxxxxxxx&#10;Secret: xxxxxxxxxxxxx"></textarea>
+                    <p class="help-text">Ambiente de testes para validar a integração</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Conta de Produção para Testes (alternativa)</label>
+                    <textarea id="productionAccount" placeholder="Caso não tenha Sandbox, forneça credenciais de uma conta de produção para testes&#10;&#10;Usuário:&#10;Senha:&#10;Outras informações:"></textarea>
+                    <p class="help-text">Apenas se não houver ambiente Sandbox disponível</p>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                🚀 Enviar Solicitação
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // File upload handlers
+        document.getElementById('gatewayLogo').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || '';
+            document.getElementById('logoFileName').textContent = fileName ? `✓ ${fileName}` : '';
+        });
+
+        document.getElementById('apiDocumentation').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || '';
+            document.getElementById('docFileName').textContent = fileName ? `✓ ${fileName}` : '';
+        });
+
+        // Form submission
+        document.getElementById('integrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form data
+            const formData = {
+                gatewayName: document.getElementById('gatewayName').value,
+                whitelabelName: document.getElementById('whitelabelName').value,
+                responsible: {
+                    name: document.getElementById('responsibleName').value,
+                    email: document.getElementById('responsibleEmail').value,
+                    phone: document.getElementById('responsiblePhone').value
+                },
+                developer: {
+                    name: document.getElementById('developerName').value,
+                    email: document.getElementById('developerEmail').value,
+                    phone: document.getElementById('developerPhone').value
+                },
+                apiDocUrl: document.getElementById('apiDocUrl').value,
+                paymentMethods: Array.from(document.querySelectorAll('input[name="paymentMethods"]:checked'))
+                    .map(cb => cb.value),
+                sandboxKeys: document.getElementById('sandboxKeys').value,
+                productionAccount: document.getElementById('productionAccount').value,
+                timestamp: new Date().toISOString()
+            };
+
+            // Save to localStorage (simulating backend)
+            const requests = JSON.parse(localStorage.getItem('integrationRequests') || '[]');
+            const requestId = 'REQ' + Date.now();
+            requests.push({ id: requestId, ...formData, status: 'Pendente' });
+            localStorage.setItem('integrationRequests', JSON.stringify(requests));
+
+            console.log('Solicitação enviada:', formData);
+
+            // Show success message
+            document.getElementById('successMessage').classList.add('show');
+            
+            // Reset form
+            this.reset();
+            document.getElementById('logoFileName').textContent = '';
+            document.getElementById('docFileName').textContent = '';
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('show');
+            }, 5000);
+        });
+
+        // Phone mask
+        function maskPhone(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            }
+            input.value = value;
+        }
+
+        document.getElementById('responsiblePhone').addEventListener('input', function() {
+            maskPhone(this);
+        });
+
+        document.getElementById('developerPhone').addEventListener('input', function() {
+            maskPhone(this);
+        });
+    </script>
+</body>
+</html>
