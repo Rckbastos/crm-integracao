@@ -702,18 +702,69 @@
     </div>
 
     <script>
+        window.API_URL = window.API_URL || 'https://SEU-BACKEND-RAILWAY.up.railway.app/api';
+    </script>
+    <script>
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
         let allRequests = [];
+        const getApiBase = () => {
+            const hostname = window.location.hostname;
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:3333/api';
+            }
+            return 'https://SEU-BACKEND-RAILWAY.up.railway.app/api';
+        };
+        const apiBase = window.API_URL || getApiBase();
 
         // Load data on page load
         window.addEventListener('load', function() {
             loadRequests();
         });
 
-        function loadRequests() {
-            const requests = JSON.parse(localStorage.getItem('integrationRequests') || '[]');
-            allRequests = requests;
-            updateStats();
-            renderTable(requests);
+        async function fetchSubmissions(filters = {}) {
+            const params = new URLSearchParams({
+                page: '1',
+                limit: '200',
+                ...filters
+            });
+            const response = await fetch(`${apiBase}/submissions?${params.toString()}`);
+            if (!response.ok) {
+                throw new Error('Falha ao carregar dados.');
+            }
+            const data = await response.json();
+            return data.items || [];
+        }
+
+        async function loadRequests(filters = {}, dateFilter = '') {
+            try {
+                const requests = await fetchSubmissions(filters);
+                allRequests = requests;
+                updateStats();
+                const filtered = dateFilter
+                    ? requests.filter(r => {
+                        const reqDate = new Date(r.createdAt).toISOString().split('T')[0];
+                        return reqDate === dateFilter;
+                    })
+                    : requests;
+                renderTable(filtered);
+            } catch (error) {
+                console.error('Erro ao carregar solicitações:', error);
+                allRequests = [];
+                updateStats();
+                renderTable([]);
+                alert('Não foi possível carregar as solicitações.');
+            }
         }
 
         function updateStats() {
@@ -744,7 +795,7 @@
             emptyState.style.display = 'none';
 
             tbody.innerHTML = requests.map(req => {
-                const date = new Date(req.timestamp);
+                const date = new Date(req.createdAt);
                 const statusClass = {
                     'Pendente': 'status-pending',
                     'Em Análise': 'status-analyzing',
@@ -754,26 +805,26 @@
 
                 return `
                     <tr>
-                        <td><strong>${req.id}</strong></td>
+                        <td><strong>${escapeHtml(req.id)}</strong></td>
                         <td>
                             <div class="gateway-info">
                                 <div class="gateway-logo">💳</div>
                                 <div class="gateway-details">
-                                    <h4>${req.gatewayName}</h4>
-                                    <p>${req.whitelabelName}</p>
+                                    <h4>${escapeHtml(req.gatewayName)}</h4>
+                                    <p>${escapeHtml(req.whitelabelName)}</p>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <div>${req.responsible.name}</div>
-                            <div style="font-size: 12px; color: #999;">${req.responsible.email}</div>
+                            <div>${escapeHtml(req.responsibleName)}</div>
+                            <div style="font-size: 12px; color: #999;">${escapeHtml(req.responsibleEmail)}</div>
                         </td>
                         <td>
-                            <div>${req.developer.name}</div>
-                            <div style="font-size: 12px; color: #999;">${req.developer.email}</div>
+                            <div>${escapeHtml(req.developerName)}</div>
+                            <div style="font-size: 12px; color: #999;">${escapeHtml(req.developerEmail)}</div>
                         </td>
                         <td>${date.toLocaleDateString('pt-BR')}</td>
-                        <td><span class="status-badge ${statusClass}">${req.status}</span></td>
+                        <td><span class="status-badge ${statusClass}">${escapeHtml(req.status)}</span></td>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn-icon btn-view" onclick="viewDetails('${req.id}')" title="Ver Detalhes">
@@ -805,11 +856,11 @@
                     <div class="detail-grid">
                         <div class="detail-item">
                             <div class="detail-label">Nome do Gateway</div>
-                            <div class="detail-value">${request.gatewayName}</div>
+                            <div class="detail-value">${escapeHtml(request.gatewayName)}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Nome do Whitelabel</div>
-                            <div class="detail-value">${request.whitelabelName}</div>
+                            <div class="detail-value">${escapeHtml(request.whitelabelName)}</div>
                         </div>
                     </div>
                 </div>
@@ -819,15 +870,15 @@
                     <div class="detail-grid">
                         <div class="detail-item">
                             <div class="detail-label">Nome</div>
-                            <div class="detail-value">${request.responsible.name}</div>
+                            <div class="detail-value">${escapeHtml(request.responsibleName)}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">E-mail</div>
-                            <div class="detail-value">${request.responsible.email}</div>
+                            <div class="detail-value">${escapeHtml(request.responsibleEmail)}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Telefone</div>
-                            <div class="detail-value">${request.responsible.phone}</div>
+                            <div class="detail-value">${escapeHtml(request.responsiblePhone)}</div>
                         </div>
                     </div>
                 </div>
@@ -837,15 +888,15 @@
                     <div class="detail-grid">
                         <div class="detail-item">
                             <div class="detail-label">Nome</div>
-                            <div class="detail-value">${request.developer.name}</div>
+                            <div class="detail-value">${escapeHtml(request.developerName)}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">E-mail</div>
-                            <div class="detail-value">${request.developer.email}</div>
+                            <div class="detail-value">${escapeHtml(request.developerEmail)}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Telefone</div>
-                            <div class="detail-value">${request.developer.phone}</div>
+                            <div class="detail-value">${escapeHtml(request.developerPhone)}</div>
                         </div>
                     </div>
                 </div>
@@ -853,16 +904,16 @@
                 <div class="detail-section">
                     <h3>📚 Documentação</h3>
                     <div class="detail-item">
-                        <div class="detail-label">URL da Documentação</div>
-                        <div class="detail-value">${request.apiDocUrl || 'Arquivo anexado'}</div>
+                        <div class="detail-label">Documentação</div>
+                        <div class="detail-value">${escapeHtml(request.apiDocUrl || request.apiDocFileName || 'Arquivo anexado')}</div>
                     </div>
                 </div>
 
                 <div class="detail-section">
                     <h3>💰 Meios de Pagamento</h3>
                     <div class="payment-methods">
-                        ${request.paymentMethods.map(method => `
-                            <span class="payment-badge">${method}</span>
+                        ${(request.paymentMethods || []).map(method => `
+                            <span class="payment-badge">${escapeHtml(method)}</span>
                         `).join('')}
                     </div>
                 </div>
@@ -871,12 +922,12 @@
                     <h3>🔑 Credenciais</h3>
                     <div class="detail-item">
                         <div class="detail-label">Chaves Sandbox</div>
-                        <div class="detail-value" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">${request.sandboxKeys}</div>
+                        <div class="detail-value" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">${escapeHtml(request.sandboxKeys)}</div>
                     </div>
                     ${request.productionAccount ? `
                         <div class="detail-item" style="margin-top: 15px;">
                             <div class="detail-label">Conta de Produção</div>
-                            <div class="detail-value" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">${request.productionAccount}</div>
+                            <div class="detail-value" style="white-space: pre-wrap; font-family: monospace; font-size: 12px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px;">${escapeHtml(request.productionAccount)}</div>
                         </div>
                     ` : ''}
                 </div>
@@ -904,13 +955,23 @@
             document.getElementById('detailModal').classList.remove('show');
         }
 
-        function updateStatus(id, newStatus) {
-            const index = allRequests.findIndex(r => r.id === id);
-            if (index !== -1) {
-                allRequests[index].status = newStatus;
-                localStorage.setItem('integrationRequests', JSON.stringify(allRequests));
-                loadRequests();
+        async function updateStatus(id, newStatus) {
+            try {
+                const response = await fetch(`${apiBase}/submissions/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha ao atualizar status.');
+                }
+
+                await loadRequests();
                 alert(`Solicitação ${newStatus.toLowerCase()} com sucesso!`);
+            } catch (error) {
+                console.error('Erro ao atualizar status:', error);
+                alert('Não foi possível atualizar o status.');
             }
         }
 
@@ -919,32 +980,18 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const dateFilter = document.getElementById('filterDate').value;
 
-            let filtered = allRequests;
-
+            const filters = {};
             if (statusFilter) {
-                filtered = filtered.filter(r => r.status === statusFilter);
+                filters.status = statusFilter;
             }
-
             if (searchTerm) {
-                filtered = filtered.filter(r => 
-                    r.gatewayName.toLowerCase().includes(searchTerm) ||
-                    r.responsible.name.toLowerCase().includes(searchTerm) ||
-                    r.developer.name.toLowerCase().includes(searchTerm)
-                );
+                filters.search = searchTerm;
             }
-
-            if (dateFilter) {
-                filtered = filtered.filter(r => {
-                    const reqDate = new Date(r.timestamp).toISOString().split('T')[0];
-                    return reqDate === dateFilter;
-                });
-            }
-
-            renderTable(filtered);
+            loadRequests(filters, dateFilter);
         }
 
-        function refreshData() {
-            loadRequests();
+        async function refreshData() {
+            await loadRequests();
             alert('Dados atualizados!');
         }
 
@@ -955,12 +1002,12 @@
                     r.id,
                     r.gatewayName,
                     r.whitelabelName,
-                    r.responsible.name,
-                    r.responsible.email,
-                    r.developer.name,
-                    r.developer.email,
+                    r.responsibleName,
+                    r.responsibleEmail,
+                    r.developerName,
+                    r.developerEmail,
                     r.status,
-                    new Date(r.timestamp).toLocaleDateString('pt-BR')
+                    new Date(r.createdAt).toLocaleDateString('pt-BR')
                 ])
             ].map(row => row.join(',')).join('\n');
 

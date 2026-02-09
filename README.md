@@ -8,8 +8,9 @@ Sistema completo para gerenciar solicitações de integração de gateways de pa
 
 ```
 pegasus-integration-system/
-├── index.html                          # Formulário público (renomeie para index.html no servidor)
+├── index.html                          # Formulário público
 ├── admin.html                          # Painel administrativo
+├── backend/                            # API Node.js + Prisma
 ├── pegasus-logo.jpg                    # Logo oficial do Pegasus
 └── README.md                           # Este arquivo
 ```
@@ -24,7 +25,7 @@ pegasus-integration-system/
 - Upload de logo e documentação
 - Seleção de meios de pagamento
 - Validação de campos obrigatórios
-- Dados salvos no localStorage
+- Dados salvos no banco PostgreSQL via API
 
 ### **2. Painel Administrativo (`admin.html`)**
 - Dashboard com estatísticas
@@ -106,18 +107,10 @@ htpasswd -c .htpasswd admin
 
 ## 💾 **ARMAZENAMENTO DE DADOS**
 
-### **Versão Atual (LocalStorage)**
-- Dados salvos no navegador
-- Sincronização automática entre páginas
-- **Limitação:** Dados locais apenas
-
-### **Versão Futura (Backend)**
-Para produção, recomendamos:
-1. **Backend API** (Node.js + tRPC)
-2. **Banco de dados** (MySQL/PostgreSQL)
-3. **Upload S3** para logos e documentações
-4. **E-mail notifications** para novos pedidos
-5. **Webhook** para integração com CRM
+### **Versão Atual (PostgreSQL)**
+- Backend Node.js + Express + Prisma em `backend/`
+- Banco PostgreSQL para persistência real
+- API REST consumida pelo formulário e painel admin
 
 ---
 
@@ -155,21 +148,70 @@ Para produção, recomendamos:
 
 ## 🧪 **TESTE LOCAL**
 
-### **Método 1: Python**
+1. Configure um banco PostgreSQL e exporte a URL:
 ```bash
-cd pegasus-integration-system
-python3 -m http.server 8080
-```
-Acesse: `http://localhost:8080`
-
-### **Método 2: Node.js**
-```bash
-npx serve pegasus-integration-system
+export DATABASE_URL="postgresql://user:password@host:port/database"
 ```
 
-### **Método 3: PHP**
+2. Instale dependências e rode o backend:
 ```bash
-php -S localhost:8080
+cd backend
+npm install
+npm run generate
+npm run dev
+```
+
+3. Acesse:
+- Formulário: `http://localhost:3000/index.html`
+- Admin: `http://localhost:3000/admin.html`
+- API: `http://localhost:3333/api/health`
+
+Observação: ajuste o `apiBase` no front se o backend não estiver em `http://localhost:3333`.
+
+## 🚂 **DEPLOY NO RAILWAY (RESUMO)**
+
+1. Crie um serviço PostgreSQL no Railway e copie o `DATABASE_URL`.
+2. Configure as variáveis de ambiente no serviço do backend:
+   - `DATABASE_URL`
+   - `PORT=3333`
+   - `NODE_ENV=production`
+   - `CORS_ORIGINS=https://www.seudominio.com,https://admin.seudominio.com`
+3. Suba o repositório e deixe o Railway usar o `railway.json`.
+4. Após o deploy, execute as migrações:
+   - `npm run migrate` (o start já chama isso no Railway).
+
+## Deploy no Railway
+
+### 1. Preparar migrations localmente
+```bash
+cd backend
+npm install
+npx prisma migrate dev --name init
+```
+
+### 2. Configurar no Railway
+
+- Criar database PostgreSQL
+- Conectar `DATABASE_URL` ao serviço backend
+- Adicionar variáveis: `NODE_ENV=production`, `CORS_ORIGINS`
+- Deploy automático ao push
+
+### 3. Após primeiro deploy
+
+- Copiar URL do backend gerado pelo Railway
+- Atualizar `API_URL` em `index.html` e `admin.html`
+- Commit e push novamente
+
+### 4. Comandos úteis
+```bash
+# Ver logs
+railway logs --service crm-integracao
+
+# Rodar migrations manualmente
+railway run npx prisma migrate deploy
+
+# Conectar ao banco
+railway run npx prisma studio
 ```
 
 ---
@@ -203,7 +245,7 @@ php -S localhost:8080
 ## 🔄 **FLUXO COMPLETO**
 
 1. **Cliente acessa formulário** → Preenche dados
-2. **Sistema valida campos** → Salva no localStorage
+2. **Sistema valida campos** → Salva no banco PostgreSQL
 3. **Mensagem de sucesso** → "Solicitação enviada!"
 4. **Admin acessa painel** → Vê nova solicitação (status: Pendente)
 5. **Admin clica "Ver Detalhes"** → Modal com todas as informações

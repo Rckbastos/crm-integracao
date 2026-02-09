@@ -483,6 +483,9 @@
     </div>
 
     <script>
+        window.API_URL = window.API_URL || 'https://SEU-BACKEND-RAILWAY.up.railway.app/api';
+    </script>
+    <script>
         // File upload handlers
         document.getElementById('gatewayLogo').addEventListener('change', function(e) {
             const fileName = e.target.files[0]?.name || '';
@@ -495,38 +498,60 @@
         });
 
         // Form submission
-        document.getElementById('integrationForm').addEventListener('submit', function(e) {
+        document.getElementById('integrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            const apiDocFile = document.getElementById('apiDocumentation').files[0];
+            const apiDocUrl = document.getElementById('apiDocUrl').value;
+            if (!apiDocFile && !apiDocUrl) {
+                alert('Informe a documentação: faça upload ou forneça a URL.');
+                return;
+            }
+
+            const getApiBase = () => {
+                const hostname = window.location.hostname;
+                if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                    return 'http://localhost:3333/api';
+                }
+                return 'https://SEU-BACKEND-RAILWAY.up.railway.app/api';
+            };
+            const apiBase = window.API_URL || getApiBase();
 
             // Get form data
             const formData = {
                 gatewayName: document.getElementById('gatewayName').value,
+                gatewayLogoName: document.getElementById('gatewayLogo').files[0]?.name || null,
                 whitelabelName: document.getElementById('whitelabelName').value,
-                responsible: {
-                    name: document.getElementById('responsibleName').value,
-                    email: document.getElementById('responsibleEmail').value,
-                    phone: document.getElementById('responsiblePhone').value
-                },
-                developer: {
-                    name: document.getElementById('developerName').value,
-                    email: document.getElementById('developerEmail').value,
-                    phone: document.getElementById('developerPhone').value
-                },
-                apiDocUrl: document.getElementById('apiDocUrl').value,
+                responsibleName: document.getElementById('responsibleName').value,
+                responsibleEmail: document.getElementById('responsibleEmail').value,
+                responsiblePhone: document.getElementById('responsiblePhone').value,
+                developerName: document.getElementById('developerName').value,
+                developerEmail: document.getElementById('developerEmail').value,
+                developerPhone: document.getElementById('developerPhone').value,
+                apiDocUrl: apiDocUrl || null,
+                apiDocFileName: apiDocFile?.name || null,
                 paymentMethods: Array.from(document.querySelectorAll('input[name="paymentMethods"]:checked'))
                     .map(cb => cb.value),
                 sandboxKeys: document.getElementById('sandboxKeys').value,
-                productionAccount: document.getElementById('productionAccount').value,
-                timestamp: new Date().toISOString()
+                productionAccount: document.getElementById('productionAccount').value || null
             };
 
-            // Save to localStorage (simulating backend)
-            const requests = JSON.parse(localStorage.getItem('integrationRequests') || '[]');
-            const requestId = 'REQ' + Date.now();
-            requests.push({ id: requestId, ...formData, status: 'Pendente' });
-            localStorage.setItem('integrationRequests', JSON.stringify(requests));
+            try {
+                const response = await fetch(`${apiBase}/submissions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
 
-            console.log('Solicitação enviada:', formData);
+                if (!response.ok) {
+                    throw new Error('Falha ao enviar solicitação.');
+                }
+                await response.json();
+            } catch (error) {
+                console.error('Erro ao enviar solicitação:', error);
+                alert('Não foi possível enviar sua solicitação. Tente novamente.');
+                return;
+            }
 
             // Show success message
             document.getElementById('successMessage').classList.add('show');
