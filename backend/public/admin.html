@@ -249,6 +249,41 @@
             overflow: hidden;
         }
 
+        .section-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-card h3 {
+            font-size: 16px;
+            color: #b5a472;
+            margin-bottom: 12px;
+        }
+
+        .section-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .section-table th,
+        .section-table td {
+            padding: 12px 10px;
+            text-align: left;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 13px;
+        }
+
+        .section-table th {
+            color: #b5a472;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -561,32 +596,32 @@
             <div class="logo-text">Pegasus Admin</div>
         </div>
 
-        <div class="nav-item active" data-status="Pendente" onclick="filterByMenuStatus('Pendente', this)">
+        <div class="nav-item active" data-view="solicitacoes" onclick="setView('solicitacoes', this)">
             <span>📋</span>
             <span>Solicitações</span>
             <span class="badge" id="pendingCount">0</span>
         </div>
-        <div class="nav-item" data-status="Aguardando" onclick="filterByMenuStatus('Aguardando', this)">
+        <div class="nav-item" data-view="aguardando" onclick="setView('aguardando', this)">
             <span>⏳</span>
             <span>Aguardando</span>
         </div>
-        <div class="nav-item" data-status="Integrando" onclick="filterByMenuStatus('Integrando', this)">
+        <div class="nav-item" data-view="integrando" onclick="setView('integrando', this)">
             <span>🛠️</span>
             <span>Integrando</span>
         </div>
-        <div class="nav-item" data-status="Concluido" onclick="filterByMenuStatus('Concluido', this)">
+        <div class="nav-item" data-view="concluido" onclick="setView('concluido', this)">
             <span>✅</span>
             <span>Concluído</span>
         </div>
-        <div class="nav-item" data-status="Rejeitado" onclick="filterByMenuStatus('Rejeitado', this)">
+        <div class="nav-item" data-view="rejeitado" onclick="setView('rejeitado', this)">
             <span>❌</span>
             <span>Rejeitadas</span>
         </div>
-        <div class="nav-item" data-view="stats" onclick="showStats(this)">
+        <div class="nav-item" data-view="stats" onclick="setView('stats', this)">
             <span>📊</span>
             <span>Estatísticas</span>
         </div>
-        <div class="nav-item" data-view="settings" onclick="showSettings(this)">
+        <div class="nav-item" data-view="settings" onclick="setView('settings', this)">
             <span>⚙️</span>
             <span>Configurações</span>
         </div>
@@ -612,92 +647,18 @@
         </div>
 
         <!-- Stats -->
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card">
-                <div class="stat-icon" style="background: rgba(251, 191, 36, 0.2);">
-                    <span>⏳</span>
-                </div>
-                <div class="stat-value" id="statPending">0</div>
-                <div class="stat-label">Pendentes</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background: rgba(59, 130, 246, 0.2);">
-                    <span>🛠️</span>
-                </div>
-                <div class="stat-value" id="statIntegrating">0</div>
-                <div class="stat-label">Integrando</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background: rgba(74, 222, 128, 0.2);">
-                    <span>✅</span>
-                </div>
-                <div class="stat-value" id="statCompleted">0</div>
-                <div class="stat-label">Concluído</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon" style="background: rgba(239, 68, 68, 0.2);">
-                    <span>❌</span>
-                </div>
-                <div class="stat-value" id="statRejected">0</div>
-                <div class="stat-label">Rejeitado</div>
-            </div>
-        </div>
-
-        <div class="stats-grid" id="statsExtra" style="display: none; margin-bottom: 30px;">
-            <div class="stat-card">
-                <div class="stat-icon" style="background: rgba(181, 164, 114, 0.2);">
-                    <span>⏱️</span>
-                </div>
-                <div class="stat-value" id="statAvgTime">0h</div>
-                <div class="stat-label">Tempo Médio (Integrando → Concluído)</div>
-            </div>
-        </div>
+        <div class="stats-grid" id="statsGrid"></div>
 
         <!-- Filters -->
-        <div class="filters">
-            <div class="filter-item">
-                <label>Status</label>
-                <select id="filterStatus" onchange="filterRequests()">
-                    <option value="">Todos</option>
-                    <option value="Pendente">Pendente</option>
-                    <option value="Aguardando">Aguardando</option>
-                    <option value="Integrando">Integrando</option>
-                    <option value="Concluido">Concluído</option>
-                    <option value="Rejeitado">Rejeitado</option>
-                </select>
-            </div>
+        <div class="filters" id="filtersContainer"></div>
 
-            <div class="filter-item">
-                <label>Buscar</label>
-                <input type="text" id="searchInput" placeholder="Nome do gateway, responsável..." oninput="filterRequests()">
-            </div>
-
-            <div class="filter-item">
-                <label>Data</label>
-                <input type="date" id="filterDate" onchange="filterRequests()">
-            </div>
-        </div>
+        <div id="customContent" style="display: none;"></div>
 
         <!-- Table -->
-        <div class="table-container">
+        <div class="table-container" id="tableContainer">
             <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Gateway</th>
-                        <th>Responsável</th>
-                        <th>Desenvolvedor</th>
-                        <th>Data</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="requestsTable">
-                    <!-- Data will be inserted here -->
-                </tbody>
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
             </table>
             <div id="emptyState" class="empty-state" style="display: none;">
                 <div class="empty-state-icon">📭</div>
@@ -747,7 +708,11 @@
             return map[status] || status;
         }
 
+        const useMockData = true; // Troque para false quando quiser consumir a API real.
         let allRequests = [];
+        let currentView = 'solicitacoes';
+        let currentFilters = {};
+
         const getApiBase = () => {
             const hostname = window.location.hostname;
             if (hostname === 'localhost' || hostname === '127.0.0.1') {
@@ -757,7 +722,372 @@
         };
         const apiBase = window.API_URL || getApiBase();
 
-        // Load data on page load
+        const mockData = [
+            {
+                id: 'REQ-20260209-00001',
+                gatewayName: 'Mercado Pago',
+                whitelabelName: 'Zenith Pay',
+                clientName: 'Zenith Global',
+                responsibleName: 'Ana Costa',
+                responsibleEmail: 'ana@zenith.com',
+                developerName: 'Lucas M.',
+                developerEmail: 'lucas@zenith.com',
+                status: 'Pendente',
+                createdAt: '2026-02-08T10:10:00Z',
+                waitingReason: 'aprovacao',
+                slaLimit: '2026-02-12T10:10:00Z',
+                stage: 'Backlog',
+                environment: 'Sandbox',
+                lastEvent: 'Formulário enviado',
+                integrationType: 'API',
+                rejectionReason: '',
+                decisionBy: '',
+                integrandoAt: null,
+                concluidoAt: null,
+                slaMet: false
+            },
+            {
+                id: 'REQ-20260209-00002',
+                gatewayName: 'PagSeguro',
+                whitelabelName: 'Pegasus',
+                clientName: 'Pegasus Checkout',
+                responsibleName: 'Bruno Lima',
+                responsibleEmail: 'bruno@pegasus.com',
+                developerName: 'Marina S.',
+                developerEmail: 'marina@pegasus.com',
+                status: 'Aguardando',
+                createdAt: '2026-02-07T09:00:00Z',
+                waitingReason: 'documentacao',
+                slaLimit: '2026-02-11T09:00:00Z',
+                stage: 'Triagem',
+                environment: 'Sandbox',
+                lastEvent: 'Documentação pendente',
+                integrationType: 'API',
+                rejectionReason: '',
+                decisionBy: '',
+                integrandoAt: null,
+                concluidoAt: null,
+                slaMet: false
+            },
+            {
+                id: 'REQ-20260209-00003',
+                gatewayName: 'Stripe',
+                whitelabelName: 'Nova Bank',
+                clientName: 'Nova Bank',
+                responsibleName: 'Carla F.',
+                responsibleEmail: 'carla@novabank.com',
+                developerName: 'Rafael A.',
+                developerEmail: 'rafael@novabank.com',
+                status: 'Integrando',
+                createdAt: '2026-02-06T12:30:00Z',
+                waitingReason: 'cliente',
+                slaLimit: '2026-02-10T12:30:00Z',
+                stage: 'Homologacao',
+                environment: 'Sandbox',
+                lastEvent: 'Teste de webhook',
+                integrationType: 'SDK',
+                rejectionReason: '',
+                decisionBy: '',
+                integrandoAt: '2026-02-07T08:00:00Z',
+                concluidoAt: null,
+                slaMet: false
+            },
+            {
+                id: 'REQ-20260209-00004',
+                gatewayName: 'Adyen',
+                whitelabelName: 'AlphaPay',
+                clientName: 'AlphaPay',
+                responsibleName: 'Diego P.',
+                responsibleEmail: 'diego@alphapay.com',
+                developerName: 'Fernanda C.',
+                developerEmail: 'fernanda@alphapay.com',
+                status: 'Concluido',
+                createdAt: '2026-02-01T11:00:00Z',
+                waitingReason: '',
+                slaLimit: '2026-02-07T11:00:00Z',
+                stage: 'Producao',
+                environment: 'Producao',
+                lastEvent: 'Go-live',
+                integrationType: 'API',
+                rejectionReason: '',
+                decisionBy: '',
+                integrandoAt: '2026-02-02T10:00:00Z',
+                concluidoAt: '2026-02-06T18:00:00Z',
+                slaMet: true
+            },
+            {
+                id: 'REQ-20260209-00005',
+                gatewayName: 'Pagar.me',
+                whitelabelName: 'Vulcan',
+                clientName: 'Vulcan SA',
+                responsibleName: 'Eduardo R.',
+                responsibleEmail: 'eduardo@vulcan.com',
+                developerName: 'Joana V.',
+                developerEmail: 'joana@vulcan.com',
+                status: 'Rejeitado',
+                createdAt: '2026-02-03T14:40:00Z',
+                waitingReason: '',
+                slaLimit: '2026-02-08T14:40:00Z',
+                stage: 'Rejeitado',
+                environment: 'Sandbox',
+                lastEvent: 'Rejeição por documentação',
+                integrationType: 'API',
+                rejectionReason: 'documentacao',
+                decisionBy: 'Comitê Técnico',
+                integrandoAt: null,
+                concluidoAt: null,
+                slaMet: false
+            },
+            {
+                id: 'REQ-20260209-00006',
+                gatewayName: 'Mercado Pago',
+                whitelabelName: 'Aurora',
+                clientName: 'Aurora Labs',
+                responsibleName: 'Iara S.',
+                responsibleEmail: 'iara@aurora.com',
+                developerName: 'Thiago L.',
+                developerEmail: 'thiago@aurora.com',
+                status: 'Integrando',
+                createdAt: '2026-02-05T09:15:00Z',
+                waitingReason: '',
+                slaLimit: '2026-02-12T09:15:00Z',
+                stage: 'Teste',
+                environment: 'Sandbox',
+                lastEvent: 'Erro em assinatura',
+                integrationType: 'API',
+                rejectionReason: '',
+                decisionBy: '',
+                integrandoAt: '2026-02-05T12:00:00Z',
+                concluidoAt: null,
+                slaMet: false
+            }
+        ];
+
+        const settingsData = {
+            statuses: ['Pendente', 'Aguardando', 'Integrando', 'Concluido', 'Rejeitado'],
+            rejectionReasons: ['documentacao', 'tecnica', 'compliance', 'pagamento'],
+            slas: [
+                { tipo: 'API', horas: 96 },
+                { tipo: 'SDK', horas: 72 }
+            ],
+            roles: ['Admin', 'Operações', 'Tech Lead'],
+            templates: ['Email Aprovação', 'Email Rejeição', 'Solicitar Docs']
+        };
+
+        const viewConfigs = {
+            solicitacoes: {
+                title: 'Solicitações de Integração',
+                subtitle: 'Visão geral do pipeline de integrações',
+                defaultStatus: '',
+                cards: (data) => [
+                    { label: 'Total', value: data.length, icon: '📌' },
+                    { label: 'Pendentes', value: data.filter(d => d.status === 'Pendente').length, icon: '⏳' },
+                    { label: 'Integrando', value: data.filter(d => d.status === 'Integrando').length, icon: '🛠️' },
+                    { label: 'Concluídos', value: data.filter(d => d.status === 'Concluido').length, icon: '✅' },
+                    { label: 'Rejeitados', value: data.filter(d => d.status === 'Rejeitado').length, icon: '❌' }
+                ],
+                filters: [
+                    { id: 'status', label: 'Status', type: 'select', options: ['', 'Pendente', 'Aguardando', 'Integrando', 'Concluido', 'Rejeitado'] },
+                    { id: 'search', label: 'Buscar', type: 'text', placeholder: 'Gateway, cliente, responsável...' },
+                    { id: 'date', label: 'Data', type: 'date' }
+                ],
+                columns: [
+                    { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
+                    { label: 'Gateway', render: (r) => `
+                        <div class="gateway-info">
+                            <div class="gateway-logo">💳</div>
+                            <div class="gateway-details">
+                                <h4>${escapeHtml(r.gatewayName)}</h4>
+                                <p>${escapeHtml(r.whitelabelName)}</p>
+                            </div>
+                        </div>
+                    ` },
+                    { label: 'Cliente/Parceiro', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
+                    { label: 'Responsável técnico', render: (r) => escapeHtml(r.responsibleName) },
+                    { label: 'Desenvolvedor', render: (r) => escapeHtml(r.developerName) },
+                    { label: 'Data', render: (r) => formatDate(r.createdAt) },
+                    { label: 'Status', render: (r) => renderStatus(r.status) },
+                    { label: 'Ações', render: (r) => renderActions(r) }
+                ],
+                empty: { title: 'Nenhuma solicitação encontrada', text: 'Quando houver novas solicitações, elas aparecerão aqui.' }
+            },
+            aguardando: {
+                title: 'Aguardando',
+                subtitle: 'Fila de integrações aguardando próxima ação',
+                defaultStatus: 'Aguardando',
+                cards: (data) => [
+                    { label: 'Aguardando', value: data.length, icon: '⏳' },
+                    { label: 'SLA em risco', value: data.filter(d => isSlaRisk(d.slaLimit)).length, icon: '⚠️' },
+                    { label: 'Aguardando documentação', value: data.filter(d => d.waitingReason === 'documentacao').length, icon: '📄' },
+                    { label: 'Aguardando aprovação', value: data.filter(d => d.waitingReason === 'aprovacao').length, icon: '✅' }
+                ],
+                filters: [
+                    { id: 'motivo', label: 'Motivo', type: 'select', options: ['', 'documentacao', 'aprovacao', 'cliente'] },
+                    { id: 'gateway', label: 'Gateway', type: 'text', placeholder: 'Nome do gateway' },
+                    { id: 'search', label: 'Buscar', type: 'text', placeholder: 'Cliente, responsável...' },
+                    { id: 'date', label: 'Data', type: 'date' }
+                ],
+                columns: [
+                    { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
+                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
+                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
+                    { label: 'Motivo', render: (r) => escapeHtml(r.waitingReason || '-') },
+                    { label: 'SLA limite', render: (r) => formatDate(r.slaLimit) },
+                    { label: 'Responsável', render: (r) => escapeHtml(r.responsibleName) },
+                    { label: 'Data', render: (r) => formatDate(r.createdAt) },
+                    { label: 'Ações', render: (r) => `
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Integrando')" title="Iniciar Integração">🛠️</button>
+                            <button class="btn-icon btn-reject" onclick="requestAdjustment('${r.id}')" title="Solicitar Ajuste">✏️</button>
+                        </div>
+                    ` }
+                ],
+                empty: { title: 'Nenhuma fila pendente', text: 'Nenhuma integração aguardando ação no momento.' }
+            },
+            integrando: {
+                title: 'Integrando',
+                subtitle: 'Acompanhamento de integrações em execução',
+                defaultStatus: 'Integrando',
+                cards: (data) => [
+                    { label: 'Em andamento', value: data.length, icon: '🛠️' },
+                    { label: 'Bloqueadas', value: data.filter(d => d.stage === 'Bloqueada').length, icon: '⛔' },
+                    { label: 'Em teste', value: data.filter(d => d.stage === 'Teste').length, icon: '🧪' },
+                    { label: 'Em homologação', value: data.filter(d => d.stage === 'Homologacao').length, icon: '✅' }
+                ],
+                filters: [
+                    { id: 'etapa', label: 'Etapa', type: 'select', options: ['', 'Backlog', 'Teste', 'Homologacao', 'Bloqueada'] },
+                    { id: 'dev', label: 'Desenvolvedor', type: 'text', placeholder: 'Nome do dev' },
+                    { id: 'gateway', label: 'Gateway', type: 'text', placeholder: 'Nome do gateway' },
+                    { id: 'ambiente', label: 'Ambiente', type: 'select', options: ['', 'Sandbox', 'Producao'] }
+                ],
+                columns: [
+                    { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
+                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
+                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
+                    { label: 'Ambiente', render: (r) => escapeHtml(r.environment || '-') },
+                    { label: 'Etapa', render: (r) => escapeHtml(r.stage || '-') },
+                    { label: 'Responsável', render: (r) => escapeHtml(r.responsibleName) },
+                    { label: 'Último evento', render: (r) => escapeHtml(r.lastEvent || '-') },
+                    { label: 'Status', render: (r) => renderStatus(r.status) },
+                    { label: 'Ações', render: (r) => `
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Concluido')" title="Concluir">✅</button>
+                            <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver logs">🧾</button>
+                        </div>
+                    ` }
+                ],
+                empty: { title: 'Sem integrações ativas', text: 'Nenhuma integração em andamento.' }
+            },
+            concluido: {
+                title: 'Concluído',
+                subtitle: 'Histórico de integrações finalizadas',
+                defaultStatus: 'Concluido',
+                cards: (data) => [
+                    { label: 'Concluídas', value: data.length, icon: '✅' },
+                    { label: 'Ativas em produção', value: data.filter(d => d.environment === 'Producao').length, icon: '🚀' },
+                    { label: 'Últimos 7 dias', value: data.filter(d => withinDays(d.concluidoAt, 7)).length, icon: '📆' },
+                    { label: 'Últimos 30 dias', value: data.filter(d => withinDays(d.concluidoAt, 30)).length, icon: '🗓️' }
+                ],
+                filters: [
+                    { id: 'gateway', label: 'Gateway', type: 'text', placeholder: 'Nome do gateway' },
+                    { id: 'cliente', label: 'Cliente', type: 'text', placeholder: 'Nome do cliente' },
+                    { id: 'date', label: 'Data conclusão', type: 'date' }
+                ],
+                columns: [
+                    { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
+                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
+                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
+                    { label: 'Tipo integração', render: (r) => escapeHtml(r.integrationType || '-') },
+                    { label: 'Ambiente', render: (r) => escapeHtml(r.environment || '-') },
+                    { label: 'Data conclusão', render: (r) => formatDate(r.concluidoAt) },
+                    { label: 'SLA atendido', render: (r) => r.slaMet ? 'Sim' : 'Não' },
+                    { label: 'Ações', render: (r) => `
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver detalhes">👁️</button>
+                            <button class="btn-icon btn-approve" onclick="duplicateIntegration('${r.id}')" title="Duplicar">📄</button>
+                        </div>
+                    ` }
+                ],
+                empty: { title: 'Nada concluído ainda', text: 'Integrações concluídas aparecerão aqui.' }
+            },
+            rejeitado: {
+                title: 'Rejeitadas',
+                subtitle: 'Governança e motivos de rejeição',
+                defaultStatus: 'Rejeitado',
+                cards: (data) => [
+                    { label: 'Rejeitadas', value: data.length, icon: '❌' },
+                    { label: 'Por compliance', value: data.filter(d => d.rejectionReason === 'compliance').length, icon: '🛡️' },
+                    { label: 'Por técnica', value: data.filter(d => d.rejectionReason === 'tecnica').length, icon: '🧩' },
+                    { label: 'Por documentação', value: data.filter(d => d.rejectionReason === 'documentacao').length, icon: '📄' }
+                ],
+                filters: [
+                    { id: 'motivo', label: 'Motivo', type: 'select', options: ['', 'documentacao', 'tecnica', 'compliance'] },
+                    { id: 'gateway', label: 'Gateway', type: 'text', placeholder: 'Nome do gateway' },
+                    { id: 'cliente', label: 'Cliente', type: 'text', placeholder: 'Nome do cliente' },
+                    { id: 'date', label: 'Data', type: 'date' }
+                ],
+                columns: [
+                    { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
+                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
+                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
+                    { label: 'Motivo rejeição', render: (r) => escapeHtml(r.rejectionReason || '-') },
+                    { label: 'Responsável decisão', render: (r) => escapeHtml(r.decisionBy || '-') },
+                    { label: 'Data', render: (r) => formatDate(r.createdAt) },
+                    { label: 'Ações', render: (r) => `
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver">👁️</button>
+                            <button class="btn-icon btn-approve" onclick="reviewRequest('${r.id}')" title="Revisar">🔍</button>
+                            <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Pendente')" title="Reabrir">♻️</button>
+                        </div>
+                    ` }
+                ],
+                empty: { title: 'Nenhuma rejeição', text: 'Não há solicitações rejeitadas.' }
+            },
+            stats: {
+                title: 'Estatísticas',
+                subtitle: 'Indicadores gerais do funil de integrações',
+                defaultStatus: '',
+                cards: (data) => {
+                    const total = data.length;
+                    const approved = data.filter(d => ['Aguardando', 'Integrando', 'Concluido'].includes(d.status)).length;
+                    const rate = total ? Math.round((approved / total) * 100) : 0;
+                    const avg = calcAverageIntegrationTime(data);
+                    const top = mostRequestedGateway(data);
+                    const sla = calcSlaRate(data);
+                    return [
+                        { label: 'Taxa aprovação', value: `${rate}%`, icon: '✅' },
+                        { label: 'Tempo médio integração', value: avg, icon: '⏱️' },
+                        { label: 'Gateway mais solicitado', value: top || '-', icon: '💳' },
+                        { label: 'SLAs atendidos', value: sla, icon: '📈' }
+                    ];
+                },
+                filters: [],
+                columns: [
+                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
+                    { label: 'Solicitações', render: (r) => r.total },
+                    { label: 'Concluídas', render: (r) => r.completed },
+                    { label: 'Rejeitadas', render: (r) => r.rejected },
+                    { label: 'Tempo médio', render: (r) => r.avgTime },
+                    { label: 'SLA%', render: (r) => r.slaRate }
+                ],
+                empty: { title: 'Sem dados', text: 'Não há dados suficientes para estatísticas.' }
+            },
+            settings: {
+                title: 'Configurações',
+                subtitle: 'Parâmetros operacionais do CRM',
+                defaultStatus: '',
+                cards: (data) => [
+                    { label: 'Gateways ativos', value: new Set(data.map(d => d.gatewayName)).size, icon: '💳' },
+                    { label: 'Motivos de rejeição', value: settingsData.rejectionReasons.length, icon: '❌' },
+                    { label: 'Perfis', value: settingsData.roles.length, icon: '👤' },
+                    { label: 'Templates', value: settingsData.templates.length, icon: '✉️' }
+                ],
+                filters: [],
+                columns: [],
+                empty: { title: '', text: '' }
+            }
+        };
+
         window.addEventListener('load', function() {
             loadRequests();
         });
@@ -776,127 +1106,363 @@
             return data.items || [];
         }
 
-        async function loadRequests(filters = {}, dateFilter = '') {
+        async function loadRequests() {
             try {
-                const requests = await fetchSubmissions(filters);
-                allRequests = requests;
-                updateStats();
-                const filtered = dateFilter
-                    ? requests.filter(r => {
-                        const reqDate = new Date(r.createdAt).toISOString().split('T')[0];
-                        return reqDate === dateFilter;
-                    })
-                    : requests;
-                renderTable(filtered);
+                allRequests = useMockData ? mockData : await fetchSubmissions();
+                renderView(currentView);
             } catch (error) {
                 console.error('Erro ao carregar solicitações:', error);
                 allRequests = [];
-                updateStats();
-                renderTable([]);
+                renderView(currentView);
                 alert('Não foi possível carregar as solicitações.');
             }
         }
 
-        function updateStats() {
-            const stats = {
-                pending: allRequests.filter(r => r.status === 'Pendente').length,
-                integrating: allRequests.filter(r => r.status === 'Integrando').length,
-                completed: allRequests.filter(r => r.status === 'Concluido').length,
-                rejected: allRequests.filter(r => r.status === 'Rejeitado').length
-            };
+        function renderView(viewKey) {
+            const view = viewConfigs[viewKey];
+            if (!view) return;
 
-            document.getElementById('statPending').textContent = stats.pending;
-            document.getElementById('statIntegrating').textContent = stats.integrating;
-            document.getElementById('statCompleted').textContent = stats.completed;
-            document.getElementById('statRejected').textContent = stats.rejected;
-            document.getElementById('pendingCount').textContent = stats.pending;
+            document.querySelector('.header h1').textContent = view.title;
+            document.querySelector('.header p').textContent = view.subtitle;
 
-            const durations = allRequests
-                .filter(r => r.integrandoAt && r.concluidoAt)
-                .map(r => new Date(r.concluidoAt) - new Date(r.integrandoAt))
-                .filter(ms => ms > 0);
+            renderCards(view, allRequests);
+            renderFilters(view);
 
-            if (durations.length > 0) {
-                const avgMs = durations.reduce((a, b) => a + b, 0) / durations.length;
-                const hours = Math.round((avgMs / 3600000) * 10) / 10;
-                document.getElementById('statAvgTime').textContent = `${hours}h`;
-            } else {
-                document.getElementById('statAvgTime').textContent = '0h';
+            const filtered = applyFilters(allRequests, view);
+            document.getElementById('pendingCount').textContent = allRequests.filter(r => r.status === 'Pendente').length;
+
+            if (viewKey === 'settings') {
+                renderSettings();
+                document.getElementById('tableContainer').style.display = 'none';
+                document.getElementById('customContent').style.display = 'block';
+                return;
             }
+
+            document.getElementById('customContent').style.display = 'none';
+            document.getElementById('tableContainer').style.display = 'block';
+
+            if (viewKey === 'stats') {
+                const summary = buildStatsSummary(allRequests);
+                renderTable(view, summary);
+                return;
+            }
+
+            renderTable(view, filtered);
         }
 
-        function renderTable(requests) {
-            const tbody = document.getElementById('requestsTable');
+        function renderCards(view, data) {
+            const cards = view.cards(data);
+            const container = document.getElementById('statsGrid');
+            container.innerHTML = cards.map(card => `
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(181, 164, 114, 0.2);">
+                        <span>${card.icon}</span>
+                    </div>
+                    <div class="stat-value">${card.value}</div>
+                    <div class="stat-label">${card.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderFilters(view) {
+            const container = document.getElementById('filtersContainer');
+            if (!view.filters.length) {
+                container.style.display = 'none';
+                container.innerHTML = '';
+                currentFilters = {};
+                return;
+            }
+            container.style.display = 'flex';
+            container.innerHTML = view.filters.map(filter => {
+                if (filter.type === 'select') {
+                    const options = filter.options.map(opt => `
+                        <option value="${opt}">${opt === '' ? 'Todos' : escapeHtml(formatStatus(opt))}</option>
+                    `).join('');
+                    return `
+                        <div class="filter-item">
+                            <label>${filter.label}</label>
+                            <select data-filter="${filter.id}">
+                                ${options}
+                            </select>
+                        </div>
+                    `;
+                }
+                return `
+                    <div class="filter-item">
+                        <label>${filter.label}</label>
+                        <input type="${filter.type}" data-filter="${filter.id}" placeholder="${filter.placeholder || ''}">
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('[data-filter]').forEach(el => {
+                el.addEventListener('input', onFilterChange);
+                el.addEventListener('change', onFilterChange);
+            });
+
+            if (!currentFilters || Object.keys(currentFilters).length === 0) {
+                currentFilters = { status: view.defaultStatus || '' };
+            }
+            container.querySelectorAll('[data-filter]').forEach(el => {
+                const key = el.dataset.filter;
+                if (currentFilters[key]) {
+                    el.value = currentFilters[key];
+                } else if (key === 'status' && view.defaultStatus) {
+                    el.value = view.defaultStatus;
+                    currentFilters.status = view.defaultStatus;
+                }
+            });
+        }
+
+        function onFilterChange() {
+            const container = document.getElementById('filtersContainer');
+            currentFilters = {};
+            container.querySelectorAll('[data-filter]').forEach(el => {
+                currentFilters[el.dataset.filter] = el.value;
+            });
+            renderView(currentView);
+        }
+
+        function applyFilters(data, view) {
+            let filtered = [...data];
+            if (view.defaultStatus) {
+                filtered = filtered.filter(item => item.status === view.defaultStatus);
+            }
+            const filters = currentFilters;
+            if (filters.status) {
+                filtered = filtered.filter(item => item.status === filters.status);
+            }
+            if (filters.search) {
+                filtered = filtered.filter(item => matchesSearch(item, filters.search));
+            }
+            if (filters.gateway) {
+                filtered = filtered.filter(item => includes(item.gatewayName, filters.gateway));
+            }
+            if (filters.cliente) {
+                filtered = filtered.filter(item => includes(item.clientName || item.whitelabelName || '', filters.cliente));
+            }
+            if (filters.dev) {
+                filtered = filtered.filter(item => includes(item.developerName, filters.dev));
+            }
+            if (filters.date) {
+                filtered = filtered.filter(item => sameDate(item.createdAt, filters.date));
+            }
+            if (filters.motivo) {
+                filtered = filtered.filter(item => (item.waitingReason || item.rejectionReason) === filters.motivo);
+            }
+            if (filters.etapa) {
+                filtered = filtered.filter(item => item.stage === filters.etapa);
+            }
+            if (filters.ambiente) {
+                filtered = filtered.filter(item => item.environment === filters.ambiente);
+            }
+            return filtered;
+        }
+
+        function renderTable(view, rows) {
+            const thead = document.getElementById('tableHead');
+            const tbody = document.getElementById('tableBody');
             const emptyState = document.getElementById('emptyState');
 
-            if (requests.length === 0) {
+            if (!rows.length) {
+                thead.innerHTML = '';
                 tbody.innerHTML = '';
                 emptyState.style.display = 'block';
+                emptyState.querySelector('h3').textContent = view.empty.title;
+                emptyState.querySelector('p').textContent = view.empty.text;
                 return;
             }
 
             emptyState.style.display = 'none';
+            thead.innerHTML = `
+                <tr>
+                    ${view.columns.map(col => `<th>${col.label}</th>`).join('')}
+                </tr>
+            `;
+            tbody.innerHTML = rows.map(row => `
+                <tr>
+                    ${view.columns.map(col => `<td>${col.render(row)}</td>`).join('')}
+                </tr>
+            `).join('');
+        }
 
-            tbody.innerHTML = requests.map(req => {
-                const date = new Date(req.createdAt);
-                const statusClass = {
-                    'Pendente': 'status-pending',
-                    'Aguardando': 'status-pending',
-                    'Integrando': 'status-analyzing',
-                    'Concluido': 'status-approved',
-                    'Rejeitado': 'status-rejected'
-                }[req.status] || 'status-pending';
+        function setView(viewKey, el) {
+            currentView = viewKey;
+            currentFilters = {};
+            setActiveNav(el);
+            renderView(viewKey);
+        }
 
-                return `
-                    <tr>
-                        <td><strong>${escapeHtml(req.id)}</strong></td>
-                        <td>
-                            <div class="gateway-info">
-                                <div class="gateway-logo">💳</div>
-                                <div class="gateway-details">
-                                    <h4>${escapeHtml(req.gatewayName)}</h4>
-                                    <p>${escapeHtml(req.whitelabelName)}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div>${escapeHtml(req.responsibleName)}</div>
-                            <div style="font-size: 12px; color: #999;">${escapeHtml(req.responsibleEmail)}</div>
-                        </td>
-                        <td>
-                            <div>${escapeHtml(req.developerName)}</div>
-                            <div style="font-size: 12px; color: #999;">${escapeHtml(req.developerEmail)}</div>
-                        </td>
-                        <td>${date.toLocaleDateString('pt-BR')}</td>
-                        <td><span class="status-badge ${statusClass}">${escapeHtml(formatStatus(req.status))}</span></td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-icon btn-view" onclick="viewDetails('${req.id}')" title="Ver Detalhes">
-                                    👁️
-                                </button>
-                                ${req.status === 'Pendente' ? `
-                                    <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Aguardando')" title="Aprovar">
-                                        ✅
-                                    </button>
-                                    <button class="btn-icon btn-reject" onclick="updateStatus('${req.id}', 'Rejeitado')" title="Rejeitar">
-                                        ❌
-                                    </button>
-                                ` : ''}
-                                ${req.status === 'Aguardando' ? `
-                                    <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Integrando')" title="Iniciar Integração">
-                                        🛠️
-                                    </button>
-                                ` : ''}
-                                ${req.status === 'Integrando' ? `
-                                    <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Concluido')" title="Concluir">
-                                        ✅
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+        function setActiveNav(el) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if (el) el.classList.add('active');
+        }
+
+        function renderStatus(status) {
+            const statusClass = {
+                'Pendente': 'status-pending',
+                'Aguardando': 'status-pending',
+                'Integrando': 'status-analyzing',
+                'Concluido': 'status-approved',
+                'Rejeitado': 'status-rejected'
+            }[status] || 'status-pending';
+            return `<span class="status-badge ${statusClass}">${escapeHtml(formatStatus(status))}</span>`;
+        }
+
+        function renderActions(req) {
+            return `
+                <div class="action-buttons">
+                    <button class="btn-icon btn-view" onclick="viewDetails('${req.id}')" title="Ver Detalhes">👁️</button>
+                    ${req.status === 'Pendente' ? `
+                        <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Aguardando')" title="Aprovar">✅</button>
+                        <button class="btn-icon btn-reject" onclick="updateStatus('${req.id}', 'Rejeitado')" title="Rejeitar">❌</button>
+                    ` : ''}
+                    ${req.status === 'Aguardando' ? `
+                        <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Integrando')" title="Iniciar Integração">🛠️</button>
+                    ` : ''}
+                    ${req.status === 'Integrando' ? `
+                        <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Concluido')" title="Concluir">✅</button>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderSettings() {
+            const container = document.getElementById('customContent');
+            container.innerHTML = `
+                <div class="section-card">
+                    <h3>Status/Etapas do Fluxo</h3>
+                    <table class="section-table">
+                        <thead><tr><th>Status</th><th>Descrição</th></tr></thead>
+                        <tbody>
+                            ${settingsData.statuses.map(s => `
+                                <tr><td>${formatStatus(s)}</td><td>Etapa operacional</td></tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="section-card">
+                    <h3>Motivos de Rejeição</h3>
+                    <table class="section-table">
+                        <thead><tr><th>Motivo</th><th>Categoria</th></tr></thead>
+                        <tbody>
+                            ${settingsData.rejectionReasons.map(r => `
+                                <tr><td>${escapeHtml(r)}</td><td>Governança</td></tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="section-card">
+                    <h3>SLA por Tipo</h3>
+                    <table class="section-table">
+                        <thead><tr><th>Tipo</th><th>Horas</th></tr></thead>
+                        <tbody>
+                            ${settingsData.slas.map(s => `
+                                <tr><td>${escapeHtml(s.tipo)}</td><td>${s.horas}h</td></tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="section-card">
+                    <h3>Papéis e Permissões</h3>
+                    <table class="section-table">
+                        <thead><tr><th>Perfil</th><th>Descrição</th></tr></thead>
+                        <tbody>
+                            ${settingsData.roles.map(r => `
+                                <tr><td>${escapeHtml(r)}</td><td>Acesso padrão</td></tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="section-card">
+                    <h3>Templates de Comunicação</h3>
+                    <table class="section-table">
+                        <thead><tr><th>Template</th><th>Status</th></tr></thead>
+                        <tbody>
+                            ${settingsData.templates.map(t => `
+                                <tr><td>${escapeHtml(t)}</td><td>Ativo</td></tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function buildStatsSummary(data) {
+            const map = {};
+            data.forEach(item => {
+                if (!map[item.gatewayName]) {
+                    map[item.gatewayName] = { gatewayName: item.gatewayName, total: 0, completed: 0, rejected: 0, avgTime: '0h', slaRate: '0%' };
+                }
+                map[item.gatewayName].total += 1;
+                if (item.status === 'Concluido') map[item.gatewayName].completed += 1;
+                if (item.status === 'Rejeitado') map[item.gatewayName].rejected += 1;
+            });
+            return Object.values(map).map(row => {
+                const related = data.filter(d => d.gatewayName === row.gatewayName);
+                row.avgTime = calcAverageIntegrationTime(related);
+                row.slaRate = calcSlaRate(related);
+                return row;
+            });
+        }
+
+        function calcAverageIntegrationTime(data) {
+            const durations = data
+                .filter(r => r.integrandoAt && r.concluidoAt)
+                .map(r => new Date(r.concluidoAt) - new Date(r.integrandoAt))
+                .filter(ms => ms > 0);
+            if (!durations.length) return '0h';
+            const avgMs = durations.reduce((a, b) => a + b, 0) / durations.length;
+            const hours = Math.round((avgMs / 3600000) * 10) / 10;
+            return `${hours}h`;
+        }
+
+        function mostRequestedGateway(data) {
+            const map = {};
+            data.forEach(d => {
+                map[d.gatewayName] = (map[d.gatewayName] || 0) + 1;
+            });
+            return Object.keys(map).sort((a, b) => map[b] - map[a])[0];
+        }
+
+        function calcSlaRate(data) {
+            const completed = data.filter(d => d.status === 'Concluido');
+            if (!completed.length) return '0%';
+            const met = completed.filter(d => d.slaMet).length;
+            return `${Math.round((met / completed.length) * 100)}%`;
+        }
+
+        function matchesSearch(item, term) {
+            const t = term.toLowerCase();
+            return [item.gatewayName, item.clientName, item.whitelabelName, item.responsibleName, item.developerName]
+                .filter(Boolean)
+                .some(v => v.toLowerCase().includes(t));
+        }
+
+        function includes(value, term) {
+            return value && term ? value.toLowerCase().includes(term.toLowerCase()) : false;
+        }
+
+        function sameDate(dateValue, dateFilter) {
+            if (!dateValue || !dateFilter) return true;
+            return new Date(dateValue).toISOString().split('T')[0] === dateFilter;
+        }
+
+        function withinDays(dateValue, days) {
+            if (!dateValue) return false;
+            const diff = Date.now() - new Date(dateValue).getTime();
+            return diff <= days * 86400000;
+        }
+
+        function isSlaRisk(limit) {
+            if (!limit) return false;
+            const diff = new Date(limit).getTime() - Date.now();
+            return diff < 48 * 3600000 && diff > 0;
+        }
+
+        function formatDate(value) {
+            if (!value) return '-';
+            return new Date(value).toLocaleDateString('pt-BR');
         }
 
         function viewDetails(id) {
@@ -915,6 +1481,14 @@
                         <div class="detail-item">
                             <div class="detail-label">Nome do Whitelabel</div>
                             <div class="detail-value">${escapeHtml(request.whitelabelName)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Cliente/Parceiro</div>
+                            <div class="detail-value">${escapeHtml(request.clientName || request.whitelabelName || '-')}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status Atual</div>
+                            <div class="detail-value">${escapeHtml(formatStatus(request.status))}</div>
                         </div>
                     </div>
                 </div>
@@ -956,19 +1530,54 @@
                 </div>
 
                 <div class="detail-section">
-                    <h3>📚 Documentação</h3>
-                    <div class="detail-item">
-                        <div class="detail-label">Documentação</div>
-                        <div class="detail-value">${escapeHtml(request.apiDocUrl || request.apiDocFileName || 'Arquivo anexado')}</div>
+                    <h3>📌 Operação</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Motivo (Aguardando/Rejeição)</div>
+                            <div class="detail-value">${escapeHtml(request.waitingReason || request.rejectionReason || '-')}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Etapa</div>
+                            <div class="detail-value">${escapeHtml(request.stage || '-')}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Ambiente</div>
+                            <div class="detail-value">${escapeHtml(request.environment || '-')}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Último Evento</div>
+                            <div class="detail-value">${escapeHtml(request.lastEvent || '-')}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">SLA Limite</div>
+                            <div class="detail-value">${escapeHtml(formatDate(request.slaLimit))}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">SLA Atendido</div>
+                            <div class="detail-value">${request.slaMet ? 'Sim' : 'Não'}</div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="detail-section">
-                    <h3>💰 Meios de Pagamento</h3>
-                    <div class="payment-methods">
-                        ${(request.paymentMethods || []).map(method => `
-                            <span class="payment-badge">${escapeHtml(method)}</span>
-                        `).join('')}
+                    <h3>⏱️ Datas do Fluxo</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Criado em</div>
+                            <div class="detail-value">${escapeHtml(formatDate(request.createdAt))}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Aprovado em</div>
+                            <div class="detail-value">${escapeHtml(formatDate(request.approvedAt))}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Integrando desde</div>
+                            <div class="detail-value">${escapeHtml(formatDate(request.integrandoAt))}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Concluído em</div>
+                            <div class="detail-value">${escapeHtml(formatDate(request.concluidoAt))}</div>
+                        </div>
                     </div>
                 </div>
 
@@ -1022,14 +1631,24 @@
 
         async function updateStatus(id, newStatus) {
             try {
-                const response = await fetch(`${apiBase}/submissions/${id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: newStatus })
-                });
+                if (useMockData) {
+                    const item = mockData.find(r => r.id === id);
+                    if (item) {
+                        item.status = newStatus;
+                        if (newStatus === 'Aguardando') item.approvedAt = new Date().toISOString();
+                        if (newStatus === 'Integrando') item.integrandoAt = new Date().toISOString();
+                        if (newStatus === 'Concluido') item.concluidoAt = new Date().toISOString();
+                    }
+                } else {
+                    const response = await fetch(`${apiBase}/submissions/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus })
+                    });
 
-                if (!response.ok) {
-                    throw new Error('Falha ao atualizar status.');
+                    if (!response.ok) {
+                        throw new Error('Falha ao atualizar status.');
+                    }
                 }
 
                 await loadRequests();
@@ -1040,54 +1659,16 @@
             }
         }
 
-        function filterRequests() {
-            const statusFilter = document.getElementById('filterStatus').value;
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const dateFilter = document.getElementById('filterDate').value;
-
-            const filters = {};
-            if (statusFilter) {
-                filters.status = statusFilter;
-            }
-            if (searchTerm) {
-                filters.search = searchTerm;
-            }
-            loadRequests(filters, dateFilter);
+        function requestAdjustment(id) {
+            alert(`Solicitação ${id}: ajuste solicitado ao cliente.`);
         }
 
-        function setActiveNav(el) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            el.classList.add('active');
+        function duplicateIntegration(id) {
+            alert(`Solicitação ${id}: duplicação iniciada.`);
         }
 
-        function filterByMenuStatus(status, el) {
-            setActiveNav(el);
-            document.getElementById('statsExtra').style.display = 'none';
-            document.getElementById('statsGrid').style.display = 'grid';
-            document.getElementById('filterStatus').value = status;
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterDate').value = '';
-            loadRequests({ status });
-        }
-
-        function showStats(el) {
-            setActiveNav(el);
-            document.getElementById('statsExtra').style.display = 'grid';
-            document.getElementById('statsGrid').style.display = 'grid';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterDate').value = '';
-            loadRequests();
-        }
-
-        function showSettings(el) {
-            setActiveNav(el);
-            document.getElementById('statsExtra').style.display = 'none';
-            document.getElementById('statsGrid').style.display = 'grid';
-            document.getElementById('filterStatus').value = '';
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterDate').value = '';
-            loadRequests();
+        function reviewRequest(id) {
+            alert(`Solicitação ${id}: revisão em andamento.`);
         }
 
         async function refreshData() {
@@ -1096,27 +1677,22 @@
         }
 
         function exportData() {
-            const csv = [
-                ['ID', 'Gateway', 'Whitelabel', 'Responsável', 'Email Responsável', 'Desenvolvedor', 'Email Desenvolvedor', 'Status', 'Data'],
-                ...allRequests.map(r => [
-                    r.id,
-                    r.gatewayName,
-                    r.whitelabelName,
-                    r.responsibleName,
-                    r.responsibleEmail,
-                    r.developerName,
-                    r.developerEmail,
-                    r.status,
-                    new Date(r.createdAt).toLocaleDateString('pt-BR')
-                ])
-            ].map(row => row.join(',')).join('\n');
+            const view = viewConfigs[currentView];
+            const rows = currentView === 'stats' ? buildStatsSummary(allRequests) : applyFilters(allRequests, view);
+            const headers = view.columns.map(c => c.label);
+            const dataRows = rows.map(row => view.columns.map(c => stripHtml(c.render(row))));
+            const csv = [headers, ...dataRows].map(row => row.join(',')).join('\n');
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `solicitacoes_pegasus_${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = `pegasus_${currentView}_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
+        }
+
+        function stripHtml(html) {
+            return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
         }
 
         // Close modal on outside click

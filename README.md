@@ -34,6 +34,11 @@ pegasus-integration-system/
 - Aprovar/Rejeitar solicitações
 - Exportar para CSV
 
+**Personalização de views (Admin)**
+- Ajuste colunas, filtros e cards em `backend/public/admin.html`.
+- O objeto `viewConfigs` controla o conteúdo de cada submenu.
+- Para trocar para dados reais, defina `useMockData = false` e use a API.
+
 ---
 
 ## 🚀 **INSTALAÇÃO**
