@@ -520,6 +520,14 @@
             };
             const apiBase = window.API_URL || getApiBase();
 
+            const normalizePhone = (value) => value.replace(/\D/g, '');
+            const responsiblePhone = normalizePhone(
+                document.getElementById('responsiblePhone').value.trim()
+            );
+            const developerPhone = normalizePhone(
+                document.getElementById('developerPhone').value.trim()
+            );
+
             // Get form data
             const formData = {
                 gatewayName: document.getElementById('gatewayName').value,
@@ -527,10 +535,10 @@
                 whitelabelName: document.getElementById('whitelabelName').value,
                 responsibleName: document.getElementById('responsibleName').value,
                 responsibleEmail: document.getElementById('responsibleEmail').value,
-                responsiblePhone: document.getElementById('responsiblePhone').value.trim(),
+                responsiblePhone,
                 developerName: document.getElementById('developerName').value,
                 developerEmail: document.getElementById('developerEmail').value,
-                developerPhone: document.getElementById('developerPhone').value.trim(),
+                developerPhone,
                 apiDocUrl: apiDocUrl || null,
                 apiDocFileName: apiDocFile?.name || null,
                 paymentMethods: Array.from(document.querySelectorAll('input[name="paymentMethods"]:checked'))
