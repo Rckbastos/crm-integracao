@@ -2,7 +2,10 @@ import fs from "fs";
 import path from "path";
 import multer from "multer";
 
-const uploadDir = path.join(__dirname, "../../uploads");
+const uploadDir =
+  process.env.RAILWAY_VOLUME_MOUNT_PATH ||
+  process.env.UPLOAD_DIR ||
+  path.join(__dirname, "../../uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
