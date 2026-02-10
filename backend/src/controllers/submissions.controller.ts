@@ -17,6 +17,7 @@ function mapSubmissionResponse(submission: any) {
     internalId: submission.id,
     gatewayName: submission.gateway_name,
     gatewayLogoName: submission.gateway_logo_name,
+    gatewayLogoPath: submission.gateway_logo_path,
     whitelabelName: submission.whitelabel_name,
     responsibleName: submission.responsible_name,
     responsibleEmail: submission.responsible_email,
@@ -26,6 +27,7 @@ function mapSubmissionResponse(submission: any) {
     developerPhone: submission.developer_phone,
     apiDocUrl: submission.api_doc_url,
     apiDocFileName: submission.api_doc_file_name,
+    apiDocFilePath: submission.api_doc_file_path,
     paymentMethods: JSON.parse(submission.payment_methods || "[]"),
     sandboxKeys: submission.sandbox_keys,
     productionAccount: submission.production_account,
@@ -50,6 +52,28 @@ export async function createSubmissionHandler(
   next: NextFunction
 ) {
   try {
+    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const gatewayLogoFile = files?.gatewayLogo?.[0];
+    const apiDocFile = files?.apiDocumentation?.[0];
+
+    req.body.gatewayLogoName =
+      gatewayLogoFile?.filename || req.body.gatewayLogoName || null;
+    req.body.gatewayLogoPath = gatewayLogoFile
+      ? `/uploads/${gatewayLogoFile.filename}`
+      : null;
+    req.body.apiDocFileName =
+      apiDocFile?.originalname || req.body.apiDocFileName || null;
+    req.body.apiDocFilePath = apiDocFile
+      ? `/uploads/${apiDocFile.filename}`
+      : null;
+
+    if (typeof req.body.apiDocUrl === "string" && req.body.apiDocUrl.trim() === "") {
+      req.body.apiDocUrl = null;
+    }
+    if (typeof req.body.paymentMethods === "string") {
+      req.body.paymentMethods = JSON.parse(req.body.paymentMethods);
+    }
+
     const payload = createSubmissionSchema.parse(req.body);
     const { submission, requestId } = await createSubmission(payload);
     res.status(201).json({

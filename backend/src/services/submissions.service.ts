@@ -15,6 +15,7 @@ function mapCreateData(input: SubmissionInput) {
   return {
     gateway_name: input.gatewayName,
     gateway_logo_name: input.gatewayLogoName ?? null,
+    gateway_logo_path: input.gatewayLogoPath ?? null,
     whitelabel_name: input.whitelabelName,
     responsible_name: input.responsibleName,
     responsible_email: input.responsibleEmail,
@@ -24,6 +25,7 @@ function mapCreateData(input: SubmissionInput) {
     developer_phone: input.developerPhone,
     api_doc_url: input.apiDocUrl ?? null,
     api_doc_file_name: input.apiDocFileName ?? null,
+    api_doc_file_path: input.apiDocFilePath ?? null,
     payment_methods: JSON.stringify(input.paymentMethods),
     sandbox_keys: input.sandboxKeys,
     production_account: input.productionAccount ?? null,
@@ -35,6 +37,7 @@ function mapUpdateData(input: SubmissionUpdateInput) {
 
   if (input.gatewayName !== undefined) data.gateway_name = input.gatewayName;
   if (input.gatewayLogoName !== undefined) data.gateway_logo_name = input.gatewayLogoName;
+  if (input.gatewayLogoPath !== undefined) data.gateway_logo_path = input.gatewayLogoPath;
   if (input.whitelabelName !== undefined) data.whitelabel_name = input.whitelabelName;
   if (input.responsibleName !== undefined) data.responsible_name = input.responsibleName;
   if (input.responsibleEmail !== undefined) data.responsible_email = input.responsibleEmail;
@@ -44,6 +47,7 @@ function mapUpdateData(input: SubmissionUpdateInput) {
   if (input.developerPhone !== undefined) data.developer_phone = input.developerPhone;
   if (input.apiDocUrl !== undefined) data.api_doc_url = input.apiDocUrl;
   if (input.apiDocFileName !== undefined) data.api_doc_file_name = input.apiDocFileName;
+  if (input.apiDocFilePath !== undefined) data.api_doc_file_path = input.apiDocFilePath;
   if (input.paymentMethods !== undefined) {
     data.payment_methods = JSON.stringify(input.paymentMethods);
   }

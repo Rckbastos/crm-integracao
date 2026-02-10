@@ -12,6 +12,7 @@ model Submission {
   request_id         String   @unique
   gateway_name       String
   gateway_logo_name  String?
+  gateway_logo_path  String?
   whitelabel_name    String
   responsible_name   String
   responsible_email  String
@@ -21,6 +22,7 @@ model Submission {
   developer_phone    String
   api_doc_url        String?
   api_doc_file_name  String?
+  api_doc_file_path  String?
   payment_methods    String
   sandbox_keys       String
   production_account String?

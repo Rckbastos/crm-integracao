@@ -1587,6 +1587,17 @@
                             <div class="detail-value">${escapeHtml(request.gatewayName)}</div>
                         </div>
                         <div class="detail-item">
+                            <div class="detail-label">Logo do Gateway</div>
+                            <div class="detail-value">
+                                ${request.gatewayLogoPath
+                                    ? `<img src="${escapeHtml(request.gatewayLogoPath)}"
+                                           alt="Logo ${escapeHtml(request.gatewayName)}"
+                                           style="max-width: 150px; max-height: 80px; object-fit: contain; margin-top: 8px;" />`
+                                    : '<span>Sem logo</span>'
+                                }
+                            </div>
+                        </div>
+                        <div class="detail-item">
                             <div class="detail-label">Nome do Whitelabel</div>
                             <div class="detail-value">${escapeHtml(request.whitelabelName)}</div>
                         </div>
@@ -1698,6 +1709,38 @@
                         <div class="detail-item">
                             <div class="detail-label">Concluído em</div>
                             <div class="detail-value">${escapeHtml(formatDate(request.concluidoAt))}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>📄 Documentação da API</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">URL da API</div>
+                            <div class="detail-value">
+                                ${request.apiDocUrl
+                                    ? `<a href="${escapeHtml(request.apiDocUrl)}" target="_blank" style="color:#b5a472;">${escapeHtml(request.apiDocUrl)}</a>`
+                                    : '-'}
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Documento Anexado</div>
+                            <div class="detail-value">${escapeHtml(request.apiDocFileName || '-')}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>💰 Métodos de Pagamento</h3>
+                    <div class="detail-item">
+                        <div class="detail-value" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            ${Array.isArray(request.paymentMethods) && request.paymentMethods.length > 0
+                                ? request.paymentMethods.map(method =>
+                                    `<span style="background: rgba(181,164,114,0.15); border: 1px solid rgba(181,164,114,0.3); color: #b5a472; padding: 4px 12px; border-radius: 20px; font-size: 13px;">${escapeHtml(method)}</span>`
+                                  ).join('')
+                                : '<span>-</span>'
+                            }
                         </div>
                     </div>
                 </div>

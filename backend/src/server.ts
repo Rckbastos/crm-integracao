@@ -14,6 +14,8 @@ app.use(express.json({ limit: "1mb" }));
 const publicDir = path.join(__dirname, "..", "public");
 app.use(express.static(publicDir));
 
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+
 app.get("/", (_req, res) => {
   res.redirect("/cadastro");
 });

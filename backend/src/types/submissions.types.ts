@@ -25,6 +25,7 @@ type Optional<T> = T | undefined;
 export interface SubmissionInput {
   gatewayName: string;
   gatewayLogoName?: string | null;
+  gatewayLogoPath?: string | null;
   whitelabelName: string;
   responsibleName: string;
   responsibleEmail: string;
@@ -34,6 +35,7 @@ export interface SubmissionInput {
   developerPhone: string;
   apiDocUrl?: string | null;
   apiDocFileName?: string | null;
+  apiDocFilePath?: string | null;
   paymentMethods: string[];
   sandboxKeys: string;
   productionAccount?: string | null;
@@ -42,6 +44,7 @@ export interface SubmissionInput {
 export interface SubmissionUpdateInput {
   gatewayName?: Optional<string>;
   gatewayLogoName?: Optional<string | null>;
+  gatewayLogoPath?: Optional<string | null>;
   whitelabelName?: Optional<string>;
   responsibleName?: Optional<string>;
   responsibleEmail?: Optional<string>;
@@ -51,6 +54,7 @@ export interface SubmissionUpdateInput {
   developerPhone?: Optional<string>;
   apiDocUrl?: Optional<string | null>;
   apiDocFileName?: Optional<string | null>;
+  apiDocFilePath?: Optional<string | null>;
   paymentMethods?: Optional<string[]>;
   sandboxKeys?: Optional<string>;
   productionAccount?: Optional<string | null>;

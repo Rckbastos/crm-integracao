@@ -284,30 +284,38 @@
                 document.getElementById('developerPhone').value.trim()
             );
 
-            // Get form data
-            const formData = {
-                gatewayName: document.getElementById('gatewayName').value,
-                gatewayLogoName: document.getElementById('gatewayLogo').files[0]?.name || null,
-                whitelabelName: document.getElementById('whitelabelName').value,
-                responsibleName: document.getElementById('responsibleName').value,
-                responsibleEmail: document.getElementById('responsibleEmail').value,
-                responsiblePhone,
-                developerName: document.getElementById('developerName').value,
-                developerEmail: document.getElementById('developerEmail').value,
-                developerPhone,
-                apiDocUrl: apiDocUrl || null,
-                apiDocFileName: apiDocFile?.name || null,
-                paymentMethods: Array.from(document.querySelectorAll('input[name="paymentMethods"]:checked'))
-                    .map(cb => cb.value),
-                sandboxKeys: document.getElementById('sandboxKeys').value,
-                productionAccount: document.getElementById('productionAccount').value || null
-            };
+            const formData = new FormData();
+
+            const logoFile = document.getElementById('gatewayLogo').files[0];
+            const docFile = document.getElementById('apiDocumentation').files[0];
+            if (logoFile) formData.append('gatewayLogo', logoFile);
+            if (docFile) formData.append('apiDocumentation', docFile);
+
+            formData.append('gatewayName', document.getElementById('gatewayName').value);
+            formData.append('whitelabelName', document.getElementById('whitelabelName').value);
+            formData.append('responsibleName', document.getElementById('responsibleName').value);
+            formData.append('responsibleEmail', document.getElementById('responsibleEmail').value);
+            formData.append('responsiblePhone', responsiblePhone);
+            formData.append('developerName', document.getElementById('developerName').value);
+            formData.append('developerEmail', document.getElementById('developerEmail').value);
+            formData.append('developerPhone', developerPhone);
+            formData.append('apiDocUrl', apiDocUrl || '');
+            formData.append('sandboxKeys', document.getElementById('sandboxKeys').value || '');
+
+            const paymentMethods = Array.from(
+                document.querySelectorAll('input[name="paymentMethods"]:checked')
+            ).map(cb => cb.value);
+            formData.append('paymentMethods', JSON.stringify(paymentMethods));
+
+            formData.append(
+                'productionAccount',
+                document.getElementById('productionAccount').value || ''
+            );
 
             try {
                 const response = await fetch(`${apiBase}/submissions`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
+                    body: formData
                 });
 
                 const payload = await response.json().catch(() => ({}));

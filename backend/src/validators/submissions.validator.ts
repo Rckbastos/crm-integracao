@@ -15,6 +15,7 @@ export const createSubmissionSchema = z
   .object({
     gatewayName: z.string().min(1),
     gatewayLogoName: z.string().nullable().optional().default(null),
+    gatewayLogoPath: z.string().nullable().optional().default(null),
     whitelabelName: z.string().min(1),
     responsibleName: z.string().min(1),
     responsibleEmail: z.string().email(),
@@ -24,6 +25,7 @@ export const createSubmissionSchema = z
     developerPhone: phoneSchema,
     apiDocUrl: z.string().url().nullable().optional().default(null),
     apiDocFileName: z.string().nullable().optional().default(null),
+    apiDocFilePath: z.string().nullable().optional().default(null),
     paymentMethods: z.array(z.string().min(1)).min(1),
     sandboxKeys: z.string().min(1),
     productionAccount: z.string().nullable().optional().default(null),
@@ -40,6 +42,7 @@ const updateSubmissionBaseSchema = z
   .object({
     gatewayName: z.string().min(1).optional(),
     gatewayLogoName: z.string().nullable().optional(),
+    gatewayLogoPath: z.string().nullable().optional(),
     whitelabelName: z.string().min(1).optional(),
     responsibleName: z.string().min(1).optional(),
     responsibleEmail: z.string().email().optional(),
@@ -49,6 +52,7 @@ const updateSubmissionBaseSchema = z
     developerPhone: phoneSchema.optional(),
     apiDocUrl: z.string().url().nullable().optional(),
     apiDocFileName: z.string().nullable().optional(),
+    apiDocFilePath: z.string().nullable().optional(),
     paymentMethods: z.array(z.string().min(1)).min(1).optional(),
     sandboxKeys: z.string().min(1).optional(),
     productionAccount: z.string().nullable().optional(),
