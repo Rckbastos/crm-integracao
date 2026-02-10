@@ -30,7 +30,7 @@ export const createSubmissionSchema = z
     }
   );
 
-export const updateSubmissionSchema = z
+const updateSubmissionBaseSchema = z
   .object({
     gatewayName: z.string().min(1).optional(),
     gatewayLogoName: z.string().nullable().optional(),
@@ -62,7 +62,9 @@ export const updateSubmissionSchema = z
     rejectedDetails: z.string().nullable().optional(),
     rejectedBy: z.string().nullable().optional(),
   })
-  .refine(
+  .strict();
+
+export const updateSubmissionSchema = updateSubmissionBaseSchema.refine(
     (data) => {
       if (data.status === "Rejeitado") {
         return Boolean(data.rejectedReason);
@@ -73,5 +75,4 @@ export const updateSubmissionSchema = z
       message: "rejectedReason is required when status is Rejeitado.",
       path: ["rejectedReason"],
     }
-  )
-  .strict();
+  );

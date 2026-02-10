@@ -82,7 +82,7 @@ async function createSubmissionEvent(
   submissionId: string,
   type: SubmissionEventType,
   message: string,
-  metadata?: Record<string, unknown>,
+  metadata?: Prisma.InputJsonValue,
   actor?: string | null
 ) {
   // Para adicionar novos tipos de evento, inclua no enum SubmissionEventType
@@ -92,7 +92,7 @@ async function createSubmissionEvent(
       submission_id: submissionId,
       type,
       message,
-      metadata: metadata ?? undefined,
+      ...(metadata !== undefined ? { metadata } : {}),
       created_by: actor ?? SYSTEM_ACTOR,
     },
   });
@@ -113,7 +113,7 @@ async function updateSubmissionStatus(
   submissionId: string,
   newStatus: SubmissionStatus,
   actor?: string | null,
-  metadata?: Record<string, unknown>
+  metadata?: Prisma.InputJsonValue
 ) {
   const message = `Status atualizado para ${newStatus}`;
   await createSubmissionEvent(tx, submissionId, "STATUS_CHANGED", message, metadata, actor);
