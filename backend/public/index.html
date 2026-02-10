@@ -502,10 +502,13 @@
             e.preventDefault();
 
             const apiDocFile = document.getElementById('apiDocumentation').files[0];
-            const apiDocUrl = document.getElementById('apiDocUrl').value;
+            let apiDocUrl = document.getElementById('apiDocUrl').value.trim();
             if (!apiDocFile && !apiDocUrl) {
                 alert('Informe a documentação: faça upload ou forneça a URL.');
                 return;
+            }
+            if (apiDocUrl && !/^https?:\/\//i.test(apiDocUrl)) {
+                apiDocUrl = `https://${apiDocUrl}`;
             }
 
             const getApiBase = () => {
@@ -543,13 +546,16 @@
                     body: JSON.stringify(formData)
                 });
 
+                const payload = await response.json().catch(() => ({}));
                 if (!response.ok) {
-                    throw new Error('Falha ao enviar solicitação.');
+                    const details = Array.isArray(payload.errors) && payload.errors.length
+                        ? payload.errors.map(e => e.message).join(' | ')
+                        : (payload.message || 'Falha ao enviar solicitação.');
+                    throw new Error(details);
                 }
-                await response.json();
             } catch (error) {
                 console.error('Erro ao enviar solicitação:', error);
-                alert('Não foi possível enviar sua solicitação. Tente novamente.');
+                alert(`Não foi possível enviar sua solicitação. ${error.message || ''}`);
                 return;
             }
 
