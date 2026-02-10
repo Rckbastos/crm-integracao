@@ -164,6 +164,10 @@ export async function updateSubmissionHandler(
 export async function deleteSubmissionHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
+    if (!id) {
+      res.status(400).json({ success: false, message: "Submission id is required" });
+      return;
+    }
     await deleteSubmission(id);
     res.json({ success: true, message: "Solicitação excluída com sucesso" });
   } catch (error: any) {
