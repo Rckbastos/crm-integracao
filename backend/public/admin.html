@@ -1035,6 +1035,18 @@
                         <div class="action-buttons">
                             <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Integrando')" title="Iniciar Integração">🛠️</button>
                             <button class="btn-icon btn-reject" onclick="requestAdjustment('${r.id}')" title="Solicitar Ajuste">✏️</button>
+                            <button 
+                              onclick="deleteRequest('${r.id}', '${escapeHtml(r.gatewayName)}')"
+                              title="Excluir solicitação"
+                              style="background: rgba(239,68,68,0.15);
+                                     border: 1px solid rgba(239,68,68,0.3);
+                                     color: #ef4444;
+                                     padding: 6px 10px;
+                                     border-radius: 6px;
+                                     cursor: pointer;
+                                     font-size: 13px;">
+                              🗑️
+                            </button>
                         </div>
                     ` }
                 ],
@@ -1069,6 +1081,18 @@
                         <div class="action-buttons">
                             <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Concluido')" title="Concluir">✅</button>
                             <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver logs">🧾</button>
+                            <button 
+                              onclick="deleteRequest('${r.id}', '${escapeHtml(r.gatewayName)}')"
+                              title="Excluir solicitação"
+                              style="background: rgba(239,68,68,0.15);
+                                     border: 1px solid rgba(239,68,68,0.3);
+                                     color: #ef4444;
+                                     padding: 6px 10px;
+                                     border-radius: 6px;
+                                     cursor: pointer;
+                                     font-size: 13px;">
+                              🗑️
+                            </button>
                         </div>
                     ` }
                 ],
@@ -1101,6 +1125,18 @@
                         <div class="action-buttons">
                             <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver detalhes">👁️</button>
                             <button class="btn-icon btn-approve" onclick="duplicateIntegration('${r.id}')" title="Duplicar">📄</button>
+                            <button 
+                              onclick="deleteRequest('${r.id}', '${escapeHtml(r.gatewayName)}')"
+                              title="Excluir solicitação"
+                              style="background: rgba(239,68,68,0.15);
+                                     border: 1px solid rgba(239,68,68,0.3);
+                                     color: #ef4444;
+                                     padding: 6px 10px;
+                                     border-radius: 6px;
+                                     cursor: pointer;
+                                     font-size: 13px;">
+                              🗑️
+                            </button>
                         </div>
                     ` }
                 ],
@@ -1134,6 +1170,18 @@
                             <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver">👁️</button>
                             <button class="btn-icon btn-approve" onclick="reviewRequest('${r.id}')" title="Revisar">🔍</button>
                             <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Pendente')" title="Reabrir">♻️</button>
+                            <button 
+                              onclick="deleteRequest('${r.id}', '${escapeHtml(r.gatewayName)}')"
+                              title="Excluir solicitação"
+                              style="background: rgba(239,68,68,0.15);
+                                     border: 1px solid rgba(239,68,68,0.3);
+                                     color: #ef4444;
+                                     padding: 6px 10px;
+                                     border-radius: 6px;
+                                     cursor: pointer;
+                                     font-size: 13px;">
+                              🗑️
+                            </button>
                         </div>
                     ` }
                 ],
@@ -1431,6 +1479,18 @@
                     ${req.status === 'Integrando' ? `
                         <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Concluido')" title="Concluir">✅</button>
                     ` : ''}
+                    <button 
+                      onclick="deleteRequest('${req.id}', '${escapeHtml(req.gatewayName)}')"
+                      title="Excluir solicitação"
+                      style="background: rgba(239,68,68,0.15);
+                             border: 1px solid rgba(239,68,68,0.3);
+                             color: #ef4444;
+                             padding: 6px 10px;
+                             border-radius: 6px;
+                             cursor: pointer;
+                             font-size: 13px;">
+                      🗑️
+                    </button>
                 </div>
             `;
         }
@@ -1798,6 +1858,15 @@
                         <button class="btn btn-secondary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Rejeitado'); closeModal();">
                             ❌ Rejeitar
                         </button>
+                        <button 
+                          class="btn"
+                          style="background: rgba(239,68,68,0.15);
+                                 border: 1px solid rgba(239,68,68,0.3);
+                                 color: #ef4444;
+                                 flex: 1;"
+                          onclick="deleteRequest('${request.id}', '${request.gatewayName}'); closeModal();">
+                          🗑️ Excluir
+                        </button>
                     ` : request.status === 'Aguardando' ? `
                         <button class="btn btn-primary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Integrando'); closeModal();">
                             🛠️ Iniciar Integração
@@ -1805,9 +1874,27 @@
                         <button class="btn btn-secondary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Rejeitado'); closeModal();">
                             ❌ Rejeitar
                         </button>
+                        <button 
+                          class="btn"
+                          style="background: rgba(239,68,68,0.15);
+                                 border: 1px solid rgba(239,68,68,0.3);
+                                 color: #ef4444;
+                                 flex: 1;"
+                          onclick="deleteRequest('${request.id}', '${request.gatewayName}'); closeModal();">
+                          🗑️ Excluir
+                        </button>
                     ` : request.status === 'Integrando' ? `
                         <button class="btn btn-primary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Concluido'); closeModal();">
                             ✅ Concluir
+                        </button>
+                        <button 
+                          class="btn"
+                          style="background: rgba(239,68,68,0.15);
+                                 border: 1px solid rgba(239,68,68,0.3);
+                                 color: #ef4444;
+                                 flex: 1;"
+                          onclick="deleteRequest('${request.id}', '${request.gatewayName}'); closeModal();">
+                          🗑️ Excluir
                         </button>
                     ` : request.status === 'Rejeitado' ? `
                         <button class="btn btn-primary" style="flex: 1;" onclick="openEditRejectedForm('${request.id}')">
@@ -1816,9 +1903,27 @@
                         <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal();">
                             Fechar
                         </button>
+                        <button 
+                          class="btn"
+                          style="background: rgba(239,68,68,0.15);
+                                 border: 1px solid rgba(239,68,68,0.3);
+                                 color: #ef4444;
+                                 flex: 1;"
+                          onclick="deleteRequest('${request.id}', '${request.gatewayName}'); closeModal();">
+                          🗑️ Excluir
+                        </button>
                     ` : `
                         <button class="btn btn-primary" style="flex: 1;" onclick="closeModal();">
                             Fechar
+                        </button>
+                        <button 
+                          class="btn"
+                          style="background: rgba(239,68,68,0.15);
+                                 border: 1px solid rgba(239,68,68,0.3);
+                                 color: #ef4444;
+                                 flex: 1;"
+                          onclick="deleteRequest('${request.id}', '${request.gatewayName}'); closeModal();">
+                          🗑️ Excluir
                         </button>
                     `}
                 </div>
@@ -2069,6 +2174,30 @@
             } catch (error) {
                 console.error('Erro ao atualizar status:', error);
                 showMessageModal('Erro', error.message || 'Não foi possível atualizar o status.');
+            }
+        }
+
+        async function deleteRequest(id, gatewayName) {
+            const confirmed = confirm(
+                `⚠️ Tem certeza que deseja excluir a solicitação de "${gatewayName}"?\n\nEsta ação não pode ser desfeita.`
+            );
+            if (!confirmed) return;
+
+            try {
+                const response = await fetch(`${apiBase}/submissions/${id}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    closeModal();
+                    await loadRequests();
+                    alert('✅ Solicitação excluída com sucesso!');
+                } else {
+                    alert('❌ Erro ao excluir: ' + data.message);
+                }
+            } catch (error) {
+                alert('❌ Erro ao excluir solicitação.');
             }
         }
 

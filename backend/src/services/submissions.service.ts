@@ -291,13 +291,39 @@ export async function updateSubmission(id: string, input: SubmissionUpdateInput)
 }
 
 export async function deleteSubmission(id: string) {
-  return prisma.submission.updateMany({
+  const submission = await prisma.submission.findFirst({
     where: {
       deleted_at: null,
       OR: [{ id }, { request_id: id }],
     },
-    data: {
-      deleted_at: new Date(),
-    },
+  });
+
+  if (!submission) {
+    throw new Error("Solicitação não encontrada");
+  }
+
+  const fs = await import("fs");
+  const path = await import("path");
+
+  if (submission.gateway_logo_path) {
+    const logoPath = path.join(
+      __dirname,
+      "../../",
+      submission.gateway_logo_path.replace(/^\/+/, "")
+    );
+    if (fs.existsSync(logoPath)) fs.unlinkSync(logoPath);
+  }
+
+  if (submission.api_doc_file_path) {
+    const docPath = path.join(
+      __dirname,
+      "../../",
+      submission.api_doc_file_path.replace(/^\/+/, "")
+    );
+    if (fs.existsSync(docPath)) fs.unlinkSync(docPath);
+  }
+
+  await prisma.submission.delete({
+    where: { id: submission.id },
   });
 }

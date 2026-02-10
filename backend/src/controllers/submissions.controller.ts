@@ -161,24 +161,12 @@ export async function updateSubmissionHandler(
   }
 }
 
-export async function deleteSubmissionHandler(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export async function deleteSubmissionHandler(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    if (!id) {
-      res.status(400).json({ message: "Submission id is required" });
-      return;
-    }
-    const result = await deleteSubmission(id);
-    if (result.count === 0) {
-      res.status(404).json({ message: "Submission not found" });
-      return;
-    }
-    res.json({ success: true });
-  } catch (error) {
-    next(error as Error);
+    await deleteSubmission(id);
+    res.json({ success: true, message: "Solicitação excluída com sucesso" });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
   }
 }
