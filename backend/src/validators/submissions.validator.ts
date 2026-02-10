@@ -1,9 +1,15 @@
 import { z } from "zod";
 
-const phoneSchema = z
-  .string()
-  .min(8)
-  .regex(/^[0-9+()\\s.-]+$/, "Telefone inválido");
+const phoneSchema = z.preprocess(
+  (value) => {
+    if (typeof value !== "string") return value;
+    return value.replace(/\\D/g, "");
+  },
+  z
+    .string()
+    .min(10, "Telefone inválido")
+    .max(13, "Telefone inválido")
+);
 
 export const createSubmissionSchema = z
   .object({
