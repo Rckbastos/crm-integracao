@@ -448,6 +448,19 @@
             overflow-y: auto;
         }
 
+        .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-error {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -678,6 +691,17 @@
             <div id="modalBody">
                 <!-- Details will be inserted here -->
             </div>
+        </div>
+    </div>
+
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="messageModalTitle">Mensagem</h2>
+                <button class="close-btn" onclick="closeMessageModal()">✕</button>
+            </div>
+            <div id="messageModalBody"></div>
+            <div class="modal-actions" id="messageModalActions"></div>
         </div>
     </div>
 
@@ -1114,7 +1138,7 @@
                 console.error('Erro ao carregar solicitações:', error);
                 allRequests = [];
                 renderView(currentView);
-                alert('Não foi possível carregar as solicitações.');
+                showMessageModal('Erro', 'Não foi possível carregar as solicitações.');
             }
         }
 
@@ -1629,17 +1653,68 @@
             document.getElementById('detailModal').classList.remove('show');
         }
 
-        async function updateStatus(id, newStatus) {
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.remove('show');
+        }
+
+        function showMessageModal(title, message) {
+            document.getElementById('messageModalTitle').textContent = title;
+            document.getElementById('messageModalBody').innerHTML = `<p>${escapeHtml(message)}</p>`;
+            document.getElementById('messageModalActions').innerHTML = `
+                <button class="btn btn-primary" onclick="closeMessageModal()">OK</button>
+            `;
+            document.getElementById('messageModal').classList.add('show');
+        }
+
+        function openRejectModal(onConfirm) {
+            document.getElementById('messageModalTitle').textContent = 'Motivo da rejeição';
+            document.getElementById('messageModalBody').innerHTML = `
+                <div class="form-group">
+                    <label>Motivo <span class="required">*</span></label>
+                    <select id="rejectReasonSelect">
+                        <option value="">Selecione...</option>
+                        <option value="COMPLIANCE">Compliance</option>
+                        <option value="DOCUMENTACAO_INCOMPLETA">Documentação incompleta</option>
+                        <option value="INCOMPATIVEL_TECNICAMENTE">Incompatível tecnicamente</option>
+                        <option value="FORA_DE_ESCOPO">Fora de escopo</option>
+                        <option value="DUPLICADA">Duplicada</option>
+                        <option value="OUTRO">Outro</option>
+                    </select>
+                    <div class="modal-error" id="rejectReasonError" style="display:none;">Motivo obrigatório.</div>
+                </div>
+                <div class="form-group">
+                    <label>Detalhes (opcional)</label>
+                    <textarea id="rejectDetailsInput" rows="3" placeholder="Descreva o motivo se necessário"></textarea>
+                </div>
+            `;
+            document.getElementById('messageModalActions').innerHTML = `
+                <button class="btn btn-secondary" onclick="closeMessageModal()">Cancelar</button>
+                <button class="btn btn-primary" id="confirmRejectBtn">Confirmar</button>
+            `;
+
+            document.getElementById('messageModal').classList.add('show');
+
+            document.getElementById('confirmRejectBtn').onclick = () => {
+                const reason = document.getElementById('rejectReasonSelect').value;
+                if (!reason) {
+                    document.getElementById('rejectReasonError').style.display = 'block';
+                    return;
+                }
+                const details = document.getElementById('rejectDetailsInput').value.trim() || null;
+                closeMessageModal();
+                onConfirm(reason, details);
+            };
+        }
+
+        async function updateStatus(id, newStatus, rejectedReasonOverride, rejectedDetailsOverride) {
             try {
-                let rejectedReason;
-                let rejectedDetails;
-                if (newStatus === 'Rejeitado') {
-                    rejectedReason = prompt('Motivo da rejeição (COMPLIANCE, DOCUMENTACAO_INCOMPLETA, INCOMPATIVEL_TECNICAMENTE, FORA_DE_ESCOPO, DUPLICADA, OUTRO):');
-                    if (!rejectedReason) {
-                        alert('Motivo de rejeição é obrigatório.');
-                        return;
-                    }
-                    rejectedDetails = prompt('Detalhes da rejeição (opcional):') || null;
+                let rejectedReason = rejectedReasonOverride;
+                let rejectedDetails = rejectedDetailsOverride;
+                if (newStatus === 'Rejeitado' && !rejectedReason) {
+                    openRejectModal(async (reason, details) => {
+                        await updateStatus(id, newStatus, reason, details);
+                    });
+                    return;
                 }
 
                 if (useMockData) {
@@ -1664,34 +1739,41 @@
                         })
                     });
 
+                    const payload = await response.json().catch(() => ({}));
                     if (!response.ok) {
-                        throw new Error('Falha ao atualizar status.');
+                        const details = Array.isArray(payload.errors) && payload.errors.length
+                            ? payload.errors.map(e => {
+                                const path = Array.isArray(e.path) && e.path.length ? e.path.join('.') : 'campo';
+                                return `${path}: ${e.message}`;
+                            }).join(' | ')
+                            : (payload.message || 'Falha ao atualizar status.');
+                        throw new Error(details);
                     }
                 }
 
                 await loadRequests();
-                alert(`Solicitação ${newStatus.toLowerCase()} com sucesso!`);
+                showMessageModal('Sucesso', `Solicitação ${newStatus.toLowerCase()} com sucesso!`);
             } catch (error) {
                 console.error('Erro ao atualizar status:', error);
-                alert('Não foi possível atualizar o status.');
+                showMessageModal('Erro', error.message || 'Não foi possível atualizar o status.');
             }
         }
 
         function requestAdjustment(id) {
-            alert(`Solicitação ${id}: ajuste solicitado ao cliente.`);
+            showMessageModal('Ajuste solicitado', `Solicitação ${id}: ajuste solicitado ao cliente.`);
         }
 
         function duplicateIntegration(id) {
-            alert(`Solicitação ${id}: duplicação iniciada.`);
+            showMessageModal('Duplicação', `Solicitação ${id}: duplicação iniciada.`);
         }
 
         function reviewRequest(id) {
-            alert(`Solicitação ${id}: revisão em andamento.`);
+            showMessageModal('Revisão', `Solicitação ${id}: revisão em andamento.`);
         }
 
         async function refreshData() {
             await loadRequests();
-            alert('Dados atualizados!');
+            showMessageModal('Atualização', 'Dados atualizados!');
         }
 
         function exportData() {
