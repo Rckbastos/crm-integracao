@@ -1631,6 +1631,17 @@
 
         async function updateStatus(id, newStatus) {
             try {
+                let rejectedReason;
+                let rejectedDetails;
+                if (newStatus === 'Rejeitado') {
+                    rejectedReason = prompt('Motivo da rejeição (COMPLIANCE, DOCUMENTACAO_INCOMPLETA, INCOMPATIVEL_TECNICAMENTE, FORA_DE_ESCOPO, DUPLICADA, OUTRO):');
+                    if (!rejectedReason) {
+                        alert('Motivo de rejeição é obrigatório.');
+                        return;
+                    }
+                    rejectedDetails = prompt('Detalhes da rejeição (opcional):') || null;
+                }
+
                 if (useMockData) {
                     const item = mockData.find(r => r.id === id);
                     if (item) {
@@ -1638,12 +1649,19 @@
                         if (newStatus === 'Aguardando') item.approvedAt = new Date().toISOString();
                         if (newStatus === 'Integrando') item.integrandoAt = new Date().toISOString();
                         if (newStatus === 'Concluido') item.concluidoAt = new Date().toISOString();
+                        if (newStatus === 'Rejeitado') {
+                            item.rejectionReason = rejectedReason;
+                        }
                     }
                 } else {
                     const response = await fetch(`${apiBase}/submissions/${id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ status: newStatus })
+                        body: JSON.stringify({
+                            status: newStatus,
+                            rejectedReason,
+                            rejectedDetails
+                        })
                     });
 
                     if (!response.ok) {
