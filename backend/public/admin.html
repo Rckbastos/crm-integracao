@@ -782,6 +782,28 @@
             return map[reason] || reason || '-';
         }
 
+        const PAYMENT_METHODS = [
+            'PIX',
+            'Boleto',
+            'Cartão de Crédito',
+            'Cartão de Débito',
+            'Transferência',
+            'Criptomoedas',
+            'Outros'
+        ];
+
+        function renderPaymentOptions(selected = []) {
+            return PAYMENT_METHODS.map(method => {
+                const checked = selected.includes(method) ? 'checked' : '';
+                return `
+                    <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <input type="checkbox" name="paymentMethodsEdit" value="${escapeHtml(method)}" ${checked}>
+                        <span>${escapeHtml(method)}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
         const useMockData = false; // Consumir API real.
         let allRequests = [];
         let currentView = 'solicitacoes';
@@ -1713,6 +1735,13 @@
                         <button class="btn btn-primary" style="flex: 1;" onclick="updateStatus('${request.id}', 'Concluido'); closeModal();">
                             ✅ Concluir
                         </button>
+                    ` : request.status === 'Rejeitado' ? `
+                        <button class="btn btn-primary" style="flex: 1;" onclick="openEditRejectedForm('${request.id}')">
+                            ✏️ Editar e Reabrir
+                        </button>
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="closeModal();">
+                            Fechar
+                        </button>
                     ` : `
                         <button class="btn btn-primary" style="flex: 1;" onclick="closeModal();">
                             Fechar
@@ -1726,6 +1755,139 @@
 
         function closeModal() {
             document.getElementById('detailModal').classList.remove('show');
+        }
+
+        function openEditRejectedForm(id) {
+            const request = allRequests.find(r => r.id === id);
+            if (!request) return;
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="detail-section">
+                    <h3>✏️ Editar Solicitação Rejeitada</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Gateway</div>
+                            <input id="editGatewayName" type="text" value="${escapeHtml(request.gatewayName || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Whitelabel</div>
+                            <input id="editWhitelabelName" type="text" value="${escapeHtml(request.whitelabelName || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Responsável</div>
+                            <input id="editResponsibleName" type="text" value="${escapeHtml(request.responsibleName || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">E-mail responsável</div>
+                            <input id="editResponsibleEmail" type="email" value="${escapeHtml(request.responsibleEmail || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Telefone responsável</div>
+                            <input id="editResponsiblePhone" type="text" value="${escapeHtml(request.responsiblePhone || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Desenvolvedor</div>
+                            <input id="editDeveloperName" type="text" value="${escapeHtml(request.developerName || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">E-mail desenvolvedor</div>
+                            <input id="editDeveloperEmail" type="email" value="${escapeHtml(request.developerEmail || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Telefone desenvolvedor</div>
+                            <input id="editDeveloperPhone" type="text" value="${escapeHtml(request.developerPhone || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">URL da documentação</div>
+                            <input id="editApiDocUrl" type="text" value="${escapeHtml(request.apiDocUrl || '')}">
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Arquivo da documentação</div>
+                            <input id="editApiDocFileName" type="text" value="${escapeHtml(request.apiDocFileName || '')}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>💳 Métodos de pagamento</h3>
+                    <div class="detail-item">
+                        ${renderPaymentOptions(Array.isArray(request.paymentMethods) ? request.paymentMethods : [])}
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <h3>🔑 Credenciais</h3>
+                    <div class="detail-item">
+                        <div class="detail-label">Chaves Sandbox</div>
+                        <textarea id="editSandboxKeys" rows="4">${escapeHtml(request.sandboxKeys || '')}</textarea>
+                    </div>
+                    <div class="detail-item" style="margin-top: 15px;">
+                        <div class="detail-label">Conta de Produção</div>
+                        <textarea id="editProductionAccount" rows="3">${escapeHtml(request.productionAccount || '')}</textarea>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 30px;">
+                    <button class="btn btn-primary" style="flex: 1;" onclick="saveRejectedEdits('${request.id}')">
+                        ✅ Reabrir Solicitação
+                    </button>
+                    <button class="btn btn-secondary" style="flex: 1;" onclick="viewDetails('${request.id}')">
+                        Voltar
+                    </button>
+                </div>
+            `;
+        }
+
+        function normalizePhone(value) {
+            return String(value || '').replace(/\D/g, '');
+        }
+
+        async function saveRejectedEdits(id) {
+            try {
+                const payload = {
+                    gatewayName: document.getElementById('editGatewayName').value.trim(),
+                    whitelabelName: document.getElementById('editWhitelabelName').value.trim(),
+                    responsibleName: document.getElementById('editResponsibleName').value.trim(),
+                    responsibleEmail: document.getElementById('editResponsibleEmail').value.trim(),
+                    responsiblePhone: normalizePhone(document.getElementById('editResponsiblePhone').value),
+                    developerName: document.getElementById('editDeveloperName').value.trim(),
+                    developerEmail: document.getElementById('editDeveloperEmail').value.trim(),
+                    developerPhone: normalizePhone(document.getElementById('editDeveloperPhone').value),
+                    apiDocUrl: document.getElementById('editApiDocUrl').value.trim() || null,
+                    apiDocFileName: document.getElementById('editApiDocFileName').value.trim() || null,
+                    paymentMethods: Array.from(document.querySelectorAll('input[name="paymentMethodsEdit"]:checked')).map(el => el.value),
+                    sandboxKeys: document.getElementById('editSandboxKeys').value.trim(),
+                    productionAccount: document.getElementById('editProductionAccount').value.trim() || null,
+                    status: 'Pendente',
+                    rejectedReason: null,
+                    rejectedDetails: null
+                };
+
+                const response = await fetch(`${apiBase}/submissions/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    const details = Array.isArray(result.errors) && result.errors.length
+                        ? result.errors.map(e => {
+                            const path = Array.isArray(e.path) && e.path.length ? e.path.join('.') : 'campo';
+                            return `${path}: ${e.message}`;
+                        }).join(' | ')
+                        : (result.message || 'Falha ao reabrir solicitação.');
+                    throw new Error(details);
+                }
+
+                await loadRequests();
+                showMessageModal('Sucesso', 'Solicitação reaberta e atualizada.');
+                closeModal();
+            } catch (error) {
+                console.error('Erro ao reabrir solicitação:', error);
+                showMessageModal('Erro', error.message || 'Não foi possível reabrir a solicitação.');
+            }
         }
 
         function closeMessageModal() {
