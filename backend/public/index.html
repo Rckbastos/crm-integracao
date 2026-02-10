@@ -4,548 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pegasus Checkout - Solicitação de Integração</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gold': '#b5a472',
+                        'gold-light': '#d4c5a0',
+                        'dark': '#0a0a0a',
+                        'dark-card': '#1a1a1a'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 40px 20px;
-            background: rgba(181, 164, 114, 0.1);
-            border-radius: 20px;
-            border: 1px solid rgba(181, 164, 114, 0.2);
-        }
-
-        .logo {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            mix-blend-mode: lighten;
-            filter: brightness(1.2) contrast(1.1);
-        }
-
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #b5a472 0%, #d4c896 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 16px;
-            color: #999;
-            line-height: 1.6;
-        }
-
-        .form-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
-        }
-
-        .form-section {
-            margin-bottom: 40px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            color: #b5a472;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(181, 164, 114, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #ccc;
-        }
-
-        .required {
-            color: #ef4444;
-            margin-left: 4px;
-        }
-
-        .priority-label {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="url"],
-        textarea,
-        select {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus {
-            outline: none;
-            border-color: #b5a472;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 0 3px rgba(181, 164, 114, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .file-upload {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-upload input[type="file"] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-upload-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 20px;
-            background: rgba(181, 164, 114, 0.1);
-            border: 2px dashed rgba(181, 164, 114, 0.3);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .file-upload-label:hover {
-            background: rgba(181, 164, 114, 0.15);
-            border-color: #b5a472;
-        }
-
-        .file-name {
-            margin-top: 8px;
-            font-size: 13px;
-            color: #b5a472;
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 12px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #b5a472;
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #b5a472 0%, #d4c896 100%);
-            border: none;
-            border-radius: 12px;
-            color: #1a1a1a;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(181, 164, 114, 0.3);
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(181, 164, 114, 0.4);
-        }
-
-        .submit-btn:active {
-            transform: translateY(0);
-        }
-
-        .close-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            border: none;
-            background: rgba(255, 255, 255, 0.08);
-            color: #ddd;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .help-text {
-            font-size: 13px;
-            color: #888;
-            margin-top: 6px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .form-card {
-                padding: 25px;
-            }
-
-            .contact-grid {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            .checkbox-group {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .success-message {
-            display: none;
-            background: rgba(74, 222, 128, 0.1);
-            border: 1px solid rgba(74, 222, 128, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            color: #4ade80;
-            text-align: center;
-        }
-
-        .success-message.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #1a1a1a;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 480px;
-            width: 100%;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .modal-header h2 {
-            font-size: 18px;
-            color: #b5a472;
-        }
-
-        .modal-actions {
-            margin-top: 16px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
+        .success-message { display: none; }
+        .success-message.show { display: block; }
+        .modal { display: none; }
+        .modal.show { display: flex; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <img src="/pegasus-logo.jpg" alt="Pegasus Checkout Logo">
+<body class="bg-dark text-white min-h-screen px-4 py-6 font-sans">
+    <div class="container max-w-3xl mx-auto">
+        <div class="header text-center mb-10 p-10 bg-gold/10 border border-gold/20 rounded-2xl">
+            <div class="logo w-48 h-48 mx-auto mb-5 flex items-center justify-center">
+                <img src="/pegasus-logo.jpg" alt="Pegasus Checkout Logo" class="w-full h-full object-contain mix-blend-lighten brightness-110 contrast-110">
             </div>
-            <h1>Pegasus Checkout</h1>
-            <p class="subtitle">Solicite a integração do seu gateway de pagamento com o checkout mais avançado do mercado</p>
+            <h1 class="text-3xl md:text-4xl font-semibold bg-gradient-to-br from-gold to-gold-light text-transparent bg-clip-text mb-2">Pegasus Checkout</h1>
+            <p class="subtitle text-base text-gray-400">Solicite a integração do seu gateway de pagamento com o checkout mais avançado do mercado</p>
         </div>
 
-        <div class="success-message" id="successMessage">
+        <div class="success-message rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 mb-5 text-center text-emerald-400" id="successMessage">
             ✅ Solicitação enviada com sucesso! Entraremos em contato em breve.
         </div>
 
-        <div class="modal" id="messageModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="messageModalTitle">Mensagem</h2>
-                    <button class="close-btn" onclick="closeMessageModal()">✕</button>
+        <div class="modal fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-5" id="messageModal">
+            <div class="modal-content bg-dark-card border border-white/10 rounded-2xl p-6 w-full max-w-md">
+                <div class="modal-header flex items-center justify-between mb-4">
+                    <h2 id="messageModalTitle" class="text-lg text-gold">Mensagem</h2>
+                    <button class="close-btn w-8 h-8 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition" onclick="closeMessageModal()">✕</button>
                 </div>
                 <div id="messageModalBody"></div>
-                <div class="modal-actions" id="messageModalActions"></div>
+                <div class="modal-actions mt-4 flex justify-end gap-2" id="messageModalActions"></div>
             </div>
         </div>
 
-        <form id="integrationForm" class="form-card">
+        <form id="integrationForm" class="form-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-10 shadow-2xl mb-8">
             <!-- Gateway Information -->
-            <div class="form-section">
-                <h3 class="section-title">
+            <div class="form-section mb-10">
+                <h3 class="section-title text-xl text-gold mb-5 pb-2 border-b-2 border-gold/20 flex items-center gap-2">
                     <span>💳</span>
                     Informações do Gateway
                 </h3>
 
-                <div class="form-group">
-                    <label>Nome do Gateway <span class="required">*</span></label>
-                    <input type="text" id="gatewayName" required placeholder="Ex: MercadoPago, PagSeguro, Stripe...">
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Nome do Gateway <span class="required text-red-500 ml-1">*</span></label>
+                    <input type="text" id="gatewayName" required placeholder="Ex: MercadoPago, PagSeguro, Stripe..." class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
                 </div>
 
-                <div class="form-group">
-                    <label>Logo do Gateway <span class="required">*</span></label>
-                    <div class="file-upload">
-                        <input type="file" id="gatewayLogo" accept="image/*" required>
-                        <label for="gatewayLogo" class="file-upload-label">
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Logo do Gateway <span class="required text-red-500 ml-1">*</span></label>
+                    <div class="file-upload w-full">
+                        <input type="file" id="gatewayLogo" accept="image/*" required class="hidden">
+                        <label for="gatewayLogo" class="file-upload-label flex items-center justify-center gap-2 p-5 bg-gold/10 border-2 border-dashed border-gold/30 rounded-lg cursor-pointer transition hover:bg-gold/15 hover:border-gold text-center">
                             <span>📤</span>
                             <span>Clique para fazer upload da logo (PNG, JPG, SVG)</span>
                         </label>
-                        <div class="file-name" id="logoFileName"></div>
+                        <div class="file-name mt-2 text-sm text-gold" id="logoFileName"></div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Nome do Whitelabel <span class="required">*</span></label>
-                    <input type="text" id="whitelabelName" required placeholder="Nome da sua marca/empresa">
-                    <p class="help-text">Nome que aparecerá no checkout para seus clientes</p>
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Nome do Whitelabel <span class="required text-red-500 ml-1">*</span></label>
+                    <input type="text" id="whitelabelName" required placeholder="Nome da sua marca/empresa" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
+                    <p class="help-text text-xs text-gray-500 mt-1.5">Nome que aparecerá no checkout para seus clientes</p>
                 </div>
             </div>
 
             <!-- Responsible Person -->
-            <div class="form-section">
-                <h3 class="section-title">
+            <div class="form-section mb-10">
+                <h3 class="section-title text-xl text-gold mb-5 pb-2 border-b-2 border-gold/20 flex items-center gap-2">
                     <span>👤</span>
                     Responsável pelo Gateway
                 </h3>
 
-                <div class="form-group">
-                    <label>Nome Completo <span class="required">*</span></label>
-                    <input type="text" id="responsibleName" required placeholder="Nome completo do responsável">
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Nome Completo <span class="required text-red-500 ml-1">*</span></label>
+                    <input type="text" id="responsibleName" required placeholder="Nome completo do responsável" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
                 </div>
 
-                <div class="contact-grid">
-                    <div class="form-group">
-                        <label>E-mail <span class="required">*</span></label>
-                        <input type="email" id="responsibleEmail" required placeholder="email@empresa.com">
+                <div class="contact-grid grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-group mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-300">E-mail <span class="required text-red-500 ml-1">*</span></label>
+                        <input type="email" id="responsibleEmail" required placeholder="email@empresa.com" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
                     </div>
 
-                    <div class="form-group">
-                        <label>Telefone/WhatsApp <span class="required">*</span></label>
-                        <input type="tel" id="responsiblePhone" required placeholder="(00) 00000-0000">
+                    <div class="form-group mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-300">Telefone/WhatsApp <span class="required text-red-500 ml-1">*</span></label>
+                        <input type="tel" id="responsiblePhone" required placeholder="(00) 00000-0000" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
                     </div>
                 </div>
             </div>
 
             <!-- Developer Contact (Priority) -->
-            <div class="form-section">
-                <h3 class="section-title">
+            <div class="form-section mb-10">
+                <h3 class="section-title text-xl text-gold mb-5 pb-2 border-b-2 border-gold/20 flex items-center gap-2">
                     <span>👨‍💻</span>
                     Contato do Desenvolvedor
-                    <span class="priority-label">⚠️ Prioritário</span>
+                    <span class="priority-label ml-2 text-xs font-semibold uppercase tracking-wide text-white bg-gradient-to-br from-red-500 to-red-600 px-2 py-0.5 rounded-md">⚠️ Prioritário</span>
                 </h3>
 
-                <div class="form-group">
-                    <label>Nome do Desenvolvedor <span class="required">*</span></label>
-                    <input type="text" id="developerName" required placeholder="Nome completo do desenvolvedor">
-                    <p class="help-text">Contato direto para evitar atrasos no prazo de integração</p>
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Nome do Desenvolvedor <span class="required text-red-500 ml-1">*</span></label>
+                    <input type="text" id="developerName" required placeholder="Nome completo do desenvolvedor" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
+                    <p class="help-text text-xs text-gray-500 mt-1.5">Contato direto para evitar atrasos no prazo de integração</p>
                 </div>
 
-                <div class="contact-grid">
-                    <div class="form-group">
-                        <label>E-mail do Desenvolvedor <span class="required">*</span></label>
-                        <input type="email" id="developerEmail" required placeholder="dev@empresa.com">
+                <div class="contact-grid grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="form-group mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-300">E-mail do Desenvolvedor <span class="required text-red-500 ml-1">*</span></label>
+                        <input type="email" id="developerEmail" required placeholder="dev@empresa.com" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
                     </div>
 
-                    <div class="form-group">
-                        <label>Telefone/WhatsApp <span class="required">*</span></label>
-                        <input type="tel" id="developerPhone" required placeholder="(00) 00000-0000">
+                    <div class="form-group mb-6">
+                        <label class="block mb-2 text-sm font-medium text-gray-300">Telefone/WhatsApp <span class="required text-red-500 ml-1">*</span></label>
+                        <input type="tel" id="developerPhone" required placeholder="(00) 00000-0000" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
                     </div>
                 </div>
             </div>
 
             <!-- API Documentation -->
-            <div class="form-section">
-                <h3 class="section-title">
+            <div class="form-section mb-10">
+                <h3 class="section-title text-xl text-gold mb-5 pb-2 border-b-2 border-gold/20 flex items-center gap-2">
                     <span>📚</span>
                     Documentação Técnica
                 </h3>
 
-                <div class="form-group">
-                    <label>Documentação de API <span class="required">*</span></label>
-                    <div class="file-upload">
-                        <input type="file" id="apiDocumentation" accept=".pdf,.doc,.docx,.txt">
-                        <label for="apiDocumentation" class="file-upload-label">
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Documentação de API <span class="required text-red-500 ml-1">*</span></label>
+                    <div class="file-upload w-full">
+                        <input type="file" id="apiDocumentation" accept=".pdf,.doc,.docx,.txt" class="hidden">
+                        <label for="apiDocumentation" class="file-upload-label flex items-center justify-center gap-2 p-5 bg-gold/10 border-2 border-dashed border-gold/30 rounded-lg cursor-pointer transition hover:bg-gold/15 hover:border-gold text-center">
                             <span>📄</span>
                             <span>Upload da documentação (PDF, DOC, TXT) ou cole a URL abaixo</span>
                         </label>
-                        <div class="file-name" id="docFileName"></div>
+                        <div class="file-name mt-2 text-sm text-gold" id="docFileName"></div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>URL da Documentação (alternativa ao upload)</label>
-                    <input type="url" id="apiDocUrl" placeholder="https://docs.gateway.com/api">
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">URL da Documentação (alternativa ao upload)</label>
+                    <input type="url" id="apiDocUrl" placeholder="https://docs.gateway.com/api" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold">
                 </div>
             </div>
 
             <!-- Payment Methods -->
-            <div class="form-section">
-                <h3 class="section-title">
+            <div class="form-section mb-10">
+                <h3 class="section-title text-xl text-gold mb-5 pb-2 border-b-2 border-gold/20 flex items-center gap-2">
                     <span>💰</span>
                     Meios de Pagamento Suportados
                 </h3>
 
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="pix" name="paymentMethods" value="PIX">
-                        <label for="pix">PIX</label>
+                <div class="checkbox-group grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                    <div class="checkbox-item flex items-center gap-3">
+                        <input type="checkbox" id="pix" name="paymentMethods" value="PIX" class="h-5 w-5 accent-gold">
+                        <label for="pix" class="text-sm text-gray-300">PIX</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="boleto" name="paymentMethods" value="Boleto">
-                        <label for="boleto">Boleto</label>
+                    <div class="checkbox-item flex items-center gap-3">
+                        <input type="checkbox" id="boleto" name="paymentMethods" value="Boleto" class="h-5 w-5 accent-gold">
+                        <label for="boleto" class="text-sm text-gray-300">Boleto</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="creditCard" name="paymentMethods" value="Cartão de Crédito">
-                        <label for="creditCard">Cartão de Crédito</label>
+                    <div class="checkbox-item flex items-center gap-3">
+                        <input type="checkbox" id="creditCard" name="paymentMethods" value="Cartão de Crédito" class="h-5 w-5 accent-gold">
+                        <label for="creditCard" class="text-sm text-gray-300">Cartão de Crédito</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="debitCard" name="paymentMethods" value="Cartão de Débito">
-                        <label for="debitCard">Cartão de Débito</label>
+                    <div class="checkbox-item flex items-center gap-3">
+                        <input type="checkbox" id="debitCard" name="paymentMethods" value="Cartão de Débito" class="h-5 w-5 accent-gold">
+                        <label for="debitCard" class="text-sm text-gray-300">Cartão de Débito</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="transfer" name="paymentMethods" value="Transferência">
-                        <label for="transfer">Transferência</label>
+                    <div class="checkbox-item flex items-center gap-3">
+                        <input type="checkbox" id="transfer" name="paymentMethods" value="Transferência" class="h-5 w-5 accent-gold">
+                        <label for="transfer" class="text-sm text-gray-300">Transferência</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="crypto" name="paymentMethods" value="Criptomoedas">
-                        <label for="crypto">Criptomoedas</label>
+                    <div class="checkbox-item flex items-center gap-3">
+                        <input type="checkbox" id="crypto" name="paymentMethods" value="Criptomoedas" class="h-5 w-5 accent-gold">
+                        <label for="crypto" class="text-sm text-gray-300">Criptomoedas</label>
                     </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="other" name="paymentMethods" value="Outros">
-                        <label for="other">Outros</label>
+                    <div class="checkbox-item flex items-center gap-3">
+                        <input type="checkbox" id="other" name="paymentMethods" value="Outros" class="h-5 w-5 accent-gold">
+                        <label for="other" class="text-sm text-gray-300">Outros</label>
                     </div>
                 </div>
             </div>
 
             <!-- API Keys -->
-            <div class="form-section">
-                <h3 class="section-title">
+            <div class="form-section mb-10">
+                <h3 class="section-title text-xl text-gold mb-5 pb-2 border-b-2 border-gold/20 flex items-center gap-2">
                     <span>🔑</span>
                     Credenciais para Testes
                 </h3>
 
-                <div class="form-group">
-                    <label>Chaves de API Sandbox <span class="required">*</span></label>
-                    <textarea id="sandboxKeys" required placeholder="Cole aqui as chaves de API do ambiente de testes (Sandbox)&#10;&#10;Exemplo:&#10;API Key: sk_test_xxxxxxxxx&#10;Public Key: pk_test_xxxxxxxxx&#10;Secret: xxxxxxxxxxxxx"></textarea>
-                    <p class="help-text">Ambiente de testes para validar a integração</p>
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Chaves de API Sandbox <span class="required text-red-500 ml-1">*</span></label>
+                    <textarea id="sandboxKeys" required placeholder="Cole aqui as chaves de API do ambiente de testes (Sandbox)&#10;&#10;Exemplo:&#10;API Key: sk_test_xxxxxxxxx&#10;Public Key: pk_test_xxxxxxxxx&#10;Secret: xxxxxxxxxxxxx" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold min-h-[100px] resize-y"></textarea>
+                    <p class="help-text text-xs text-gray-500 mt-1.5">Ambiente de testes para validar a integração</p>
                 </div>
 
-                <div class="form-group">
-                    <label>Conta de Produção para Testes (alternativa)</label>
-                    <textarea id="productionAccount" placeholder="Caso não tenha Sandbox, forneça credenciais de uma conta de produção para testes&#10;&#10;Usuário:&#10;Senha:&#10;Outras informações:"></textarea>
-                    <p class="help-text">Apenas se não houver ambiente Sandbox disponível</p>
+                <div class="form-group mb-6">
+                    <label class="block mb-2 text-sm font-medium text-gray-300">Conta de Produção para Testes (alternativa)</label>
+                    <textarea id="productionAccount" placeholder="Caso não tenha Sandbox, forneça credenciais de uma conta de produção para testes&#10;&#10;Usuário:&#10;Senha:&#10;Outras informações:" class="w-full rounded-lg bg-[#1f1f1f] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold min-h-[100px] resize-y"></textarea>
+                    <p class="help-text text-xs text-gray-500 mt-1.5">Apenas se não houver ambiente Sandbox disponível</p>
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn">
+            <button type="submit" class="submit-btn w-full py-4 rounded-lg font-semibold uppercase tracking-wider text-[#1a1a1a] bg-gradient-to-br from-gold to-gold-light shadow-2xl shadow-gold/20 transition hover:-translate-y-0.5 hover:shadow-gold/30">
                 🚀 Enviar Solicitação
             </button>
         </form>
@@ -563,7 +237,7 @@
             document.getElementById('messageModalTitle').textContent = title;
             document.getElementById('messageModalBody').innerHTML = `<p>${message}</p>`;
             document.getElementById('messageModalActions').innerHTML = `
-                <button class="submit-btn" style="margin:0; width:auto;" onclick="closeMessageModal()">OK</button>
+                <button class="submit-btn w-full py-2 px-4 rounded-lg font-semibold uppercase tracking-wider text-[#1a1a1a] bg-gradient-to-br from-gold to-gold-light shadow-2xl shadow-gold/20" style="margin:0; width:auto;" onclick="closeMessageModal()">OK</button>
             `;
             document.getElementById('messageModal').classList.add('show');
         }
