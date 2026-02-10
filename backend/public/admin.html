@@ -770,6 +770,18 @@
             return map[status] || status;
         }
 
+        function formatRejectionReason(reason) {
+            const map = {
+                COMPLIANCE: 'Compliance',
+                DOCUMENTACAO_INCOMPLETA: 'Documentação incompleta',
+                INCOMPATIVEL_TECNICAMENTE: 'Incompatível tecnicamente',
+                FORA_DE_ESCOPO: 'Fora de escopo',
+                DUPLICADA: 'Duplicada',
+                OUTRO: 'Outro'
+            };
+            return map[reason] || reason || '-';
+        }
+
         const useMockData = false; // Consumir API real.
         let allRequests = [];
         let currentView = 'solicitacoes';
@@ -1608,7 +1620,20 @@
                     <div class="detail-grid">
                         <div class="detail-item">
                             <div class="detail-label">Motivo (Aguardando/Rejeição)</div>
-                            <div class="detail-value">${escapeHtml(request.waitingReason || request.rejectionReason || '-')}</div>
+                            <div class="detail-value">${escapeHtml(formatRejectionReason(
+                                request.rejectedReason
+                                || request.rejectionReason
+                                || request.waitingReason
+                                || ''
+                            ))}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Detalhes da Rejeição</div>
+                            <div class="detail-value">${escapeHtml(
+                                request.rejectedDetails
+                                || request.rejectionDetails
+                                || '-'
+                            )}</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Etapa</div>
@@ -1776,6 +1801,8 @@
                         if (newStatus === 'Concluido') item.concluidoAt = new Date().toISOString();
                         if (newStatus === 'Rejeitado') {
                             item.rejectionReason = rejectedReason;
+                            item.rejectedReason = rejectedReason;
+                            item.rejectedDetails = rejectedDetails || null;
                         }
                     }
                 } else {
