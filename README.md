@@ -39,6 +39,11 @@ pegasus-integration-system/
 - O objeto `viewConfigs` controla o conteúdo de cada submenu.
 - Para trocar para dados reais, defina `useMockData = false` e use a API.
 
+**Eventos e rejeições (Backend)**
+- Eventos são gravados em `submission_events` via `createSubmissionEvent`.
+- Para buscar a timeline: `SELECT * FROM submission_events WHERE submission_id = ? ORDER BY created_at DESC`.
+- Motivo de rejeição é salvo em `submissions.rejected_reason` e cria evento `REJECTED`.
+
 ---
 
 ## 🚀 **INSTALAÇÃO**

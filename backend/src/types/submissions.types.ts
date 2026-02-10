@@ -4,6 +4,22 @@ export type SubmissionStatus =
   | "Integrando"
   | "Concluido"
   | "Rejeitado";
+
+export type RejectionReason =
+  | "COMPLIANCE"
+  | "DOCUMENTACAO_INCOMPLETA"
+  | "INCOMPATIVEL_TECNICAMENTE"
+  | "FORA_DE_ESCOPO"
+  | "DUPLICADA"
+  | "OUTRO";
+
+export type SubmissionEventType =
+  | "CREATED"
+  | "STATUS_CHANGED"
+  | "REJECTED"
+  | "STEP_UPDATED"
+  | "DEVELOPER_ASSIGNED"
+  | "ERROR_RECORDED";
 type Optional<T> = T | undefined;
 
 export interface SubmissionInput {
@@ -42,4 +58,8 @@ export interface SubmissionUpdateInput {
   approvedAt?: Optional<string | null>;
   integrandoAt?: Optional<string | null>;
   concluidoAt?: Optional<string | null>;
+  rejectedReason?: Optional<RejectionReason | string | null>;
+  rejectedDetails?: Optional<string | null>;
+  rejectedAt?: Optional<string | null>;
+  rejectedBy?: Optional<string | null>;
 }

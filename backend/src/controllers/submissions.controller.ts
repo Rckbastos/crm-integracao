@@ -33,6 +33,12 @@ function mapSubmissionResponse(submission: any) {
     approvedAt: submission.approved_at,
     integrandoAt: submission.integrando_at,
     concluidoAt: submission.concluido_at,
+    rejectedReason: submission.rejected_reason,
+    rejectedDetails: submission.rejected_details,
+    rejectedAt: submission.rejected_at,
+    rejectedBy: submission.rejected_by,
+    lastEvent: submission.last_event,
+    lastEventAt: submission.last_event_at,
     createdAt: submission.created_at,
     updatedAt: submission.updated_at,
   };

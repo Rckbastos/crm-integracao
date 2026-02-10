@@ -28,9 +28,32 @@ model Submission {
   approved_at        DateTime?
   integrando_at      DateTime?
   concluido_at       DateTime?
+  rejected_reason    String?
+  rejected_details   String?
+  rejected_at        DateTime?
+  rejected_by        String?
+  last_event         String?
+  last_event_at      DateTime?
   created_at         DateTime @default(now())
   updated_at         DateTime @updatedAt
   deleted_at         DateTime?
 
+  events             SubmissionEvent[]
+
   @@map("submissions")
+}
+
+model SubmissionEvent {
+  id            String   @id @default(uuid())
+  submission_id String
+  type          String
+  message       String
+  metadata      Json?
+  created_at    DateTime @default(now())
+  created_by    String?
+
+  submission    Submission @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+
+  @@index([submission_id, created_at(sort: Desc)])
+  @@map("submission_events")
 }

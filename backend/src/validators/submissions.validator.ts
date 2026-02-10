@@ -49,5 +49,29 @@ export const updateSubmissionSchema = z
     status: z
       .enum(["Pendente", "Aguardando", "Integrando", "Concluido", "Rejeitado"])
       .optional(),
+    rejectedReason: z
+      .enum([
+        "COMPLIANCE",
+        "DOCUMENTACAO_INCOMPLETA",
+        "INCOMPATIVEL_TECNICAMENTE",
+        "FORA_DE_ESCOPO",
+        "DUPLICADA",
+        "OUTRO",
+      ])
+      .optional(),
+    rejectedDetails: z.string().nullable().optional(),
+    rejectedBy: z.string().nullable().optional(),
   })
+  .refine(
+    (data) => {
+      if (data.status === "Rejeitado") {
+        return Boolean(data.rejectedReason);
+      }
+      return true;
+    },
+    {
+      message: "rejectedReason is required when status is Rejeitado.",
+      path: ["rejectedReason"],
+    }
+  )
   .strict();

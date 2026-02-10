@@ -1,9 +1,15 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../config/database";
 import { generateRequestId } from "../utils/requestId.generator";
-import { SubmissionInput, SubmissionUpdateInput } from "../types/submissions.types";
+import {
+  SubmissionInput,
+  SubmissionUpdateInput,
+  SubmissionEventType,
+  SubmissionStatus,
+} from "../types/submissions.types";
 
 const MAX_REQUEST_ID_ATTEMPTS = 5;
+const SYSTEM_ACTOR = "system";
 
 function mapCreateData(input: SubmissionInput) {
   return {
@@ -55,20 +61,103 @@ function mapUpdateData(input: SubmissionUpdateInput) {
   if (input.concluidoAt !== undefined) {
     data.concluido_at = input.concluidoAt ? new Date(input.concluidoAt) : null;
   }
+  if (input.rejectedReason !== undefined) {
+    data.rejected_reason = input.rejectedReason ?? null;
+  }
+  if (input.rejectedDetails !== undefined) {
+    data.rejected_details = input.rejectedDetails ?? null;
+  }
+  if (input.rejectedAt !== undefined) {
+    data.rejected_at = input.rejectedAt ? new Date(input.rejectedAt) : null;
+  }
+  if (input.rejectedBy !== undefined) {
+    data.rejected_by = input.rejectedBy ?? null;
+  }
 
   return data;
+}
+
+async function createSubmissionEvent(
+  tx: Prisma.TransactionClient,
+  submissionId: string,
+  type: SubmissionEventType,
+  message: string,
+  metadata?: Record<string, unknown>,
+  actor?: string | null
+) {
+  // Para adicionar novos tipos de evento, inclua no enum SubmissionEventType
+  // e use esta função para gravar a timeline (submission_events).
+  const event = await tx.submissionEvent.create({
+    data: {
+      submission_id: submissionId,
+      type,
+      message,
+      metadata: metadata ?? undefined,
+      created_by: actor ?? SYSTEM_ACTOR,
+    },
+  });
+
+  await tx.submission.update({
+    where: { id: submissionId },
+    data: {
+      last_event: message,
+      last_event_at: event.created_at,
+    },
+  });
+
+  return event;
+}
+
+async function updateSubmissionStatus(
+  tx: Prisma.TransactionClient,
+  submissionId: string,
+  newStatus: SubmissionStatus,
+  actor?: string | null,
+  metadata?: Record<string, unknown>
+) {
+  const message = `Status atualizado para ${newStatus}`;
+  await createSubmissionEvent(tx, submissionId, "STATUS_CHANGED", message, metadata, actor);
+}
+
+async function rejectSubmission(
+  tx: Prisma.TransactionClient,
+  submissionId: string,
+  reason: string,
+  details?: string | null,
+  actor?: string | null
+) {
+  const message = `Solicitação rejeitada — motivo: ${reason}`;
+  await createSubmissionEvent(
+    tx,
+    submissionId,
+    "REJECTED",
+    message,
+    { reason, details },
+    actor
+  );
 }
 
 export async function createSubmission(input: SubmissionInput) {
   for (let attempt = 0; attempt < MAX_REQUEST_ID_ATTEMPTS; attempt += 1) {
     const requestId = await generateRequestId();
     try {
-      const submission = await prisma.submission.create({
-        data: {
-          request_id: requestId,
-          ...mapCreateData(input),
-          status: "Pendente",
-        },
+      const submission = await prisma.$transaction(async (tx) => {
+        const created = await tx.submission.create({
+          data: {
+            request_id: requestId,
+            ...mapCreateData(input),
+            status: "Pendente",
+          },
+        });
+        await createSubmissionEvent(
+          tx,
+          created.id,
+          "CREATED",
+          "Solicitação criada",
+          { requestId },
+          SYSTEM_ACTOR
+        );
+        return created;
       });
       return { submission, requestId };
     } catch (error) {
@@ -131,24 +220,69 @@ export async function getSubmissionById(id: string) {
 }
 
 export async function updateSubmission(id: string, input: SubmissionUpdateInput) {
-  if (input.status) {
-    if (input.status === "Aguardando") {
-      input = { ...input, approvedAt: new Date().toISOString() };
+  return prisma.$transaction(async (tx) => {
+    const target = await tx.submission.findFirst({
+      where: {
+        deleted_at: null,
+        OR: [{ id }, { request_id: id }],
+      },
+    });
+
+    if (!target) {
+      return { count: 0 };
     }
-    if (input.status === "Integrando") {
-      input = { ...input, integrandoAt: new Date().toISOString() };
+
+    let nextInput = { ...input };
+
+    if (nextInput.status) {
+      if (nextInput.status === "Aguardando") {
+        nextInput = { ...nextInput, approvedAt: new Date().toISOString() };
+      }
+      if (nextInput.status === "Integrando") {
+        nextInput = { ...nextInput, integrandoAt: new Date().toISOString() };
+      }
+      if (nextInput.status === "Concluido") {
+        nextInput = { ...nextInput, concluidoAt: new Date().toISOString() };
+      }
+      if (nextInput.status === "Rejeitado") {
+        nextInput = {
+          ...nextInput,
+          rejectedAt: new Date().toISOString(),
+          rejectedBy: nextInput.rejectedBy ?? SYSTEM_ACTOR,
+        };
+      }
     }
-    if (input.status === "Concluido") {
-      input = { ...input, concluidoAt: new Date().toISOString() };
+
+    const data = mapUpdateData(nextInput);
+    const result = await tx.submission.updateMany({
+      where: {
+        deleted_at: null,
+        OR: [{ id }, { request_id: id }],
+      },
+      data,
+    });
+
+    if (nextInput.status) {
+      if (nextInput.status === "Rejeitado") {
+        await rejectSubmission(
+          tx,
+          target.id,
+          String(nextInput.rejectedReason),
+          nextInput.rejectedDetails ?? null,
+          nextInput.rejectedBy ?? SYSTEM_ACTOR
+        );
+      } else {
+        await updateSubmissionStatus(
+          tx,
+          target.id,
+          nextInput.status,
+          SYSTEM_ACTOR,
+          { from: target.status, to: nextInput.status }
+        );
+      }
     }
-  }
-  const data = mapUpdateData(input);
-  return prisma.submission.updateMany({
-    where: {
-      deleted_at: null,
-      OR: [{ id }, { request_id: id }],
-    },
-    data,
+
+    return result;
   });
 }
 
