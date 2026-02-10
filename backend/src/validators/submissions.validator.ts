@@ -3,7 +3,7 @@ import { z } from "zod";
 const phoneSchema = z
   .string()
   .min(8)
-  .regex(/^[0-9+()\\s-]+$/);
+  .regex(/^[0-9+()\\s.-]+$/, "Telefone inválido");
 
 export const createSubmissionSchema = z
   .object({

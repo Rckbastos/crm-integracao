@@ -527,10 +527,10 @@
                 whitelabelName: document.getElementById('whitelabelName').value,
                 responsibleName: document.getElementById('responsibleName').value,
                 responsibleEmail: document.getElementById('responsibleEmail').value,
-                responsiblePhone: document.getElementById('responsiblePhone').value,
+                responsiblePhone: document.getElementById('responsiblePhone').value.trim(),
                 developerName: document.getElementById('developerName').value,
                 developerEmail: document.getElementById('developerEmail').value,
-                developerPhone: document.getElementById('developerPhone').value,
+                developerPhone: document.getElementById('developerPhone').value.trim(),
                 apiDocUrl: apiDocUrl || null,
                 apiDocFileName: apiDocFile?.name || null,
                 paymentMethods: Array.from(document.querySelectorAll('input[name="paymentMethods"]:checked'))
@@ -549,7 +549,10 @@
                 const payload = await response.json().catch(() => ({}));
                 if (!response.ok) {
                     const details = Array.isArray(payload.errors) && payload.errors.length
-                        ? payload.errors.map(e => e.message).join(' | ')
+                        ? payload.errors.map(e => {
+                            const path = Array.isArray(e.path) && e.path.length ? e.path.join('.') : 'campo';
+                            return `${path}: ${e.message}`;
+                        }).join(' | ')
                         : (payload.message || 'Falha ao enviar solicitação.');
                     throw new Error(details);
                 }
