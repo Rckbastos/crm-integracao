@@ -1371,10 +1371,22 @@
             return `<span class="status-badge ${statusClass}">${escapeHtml(formatStatus(status))}</span>`;
         }
 
+        function getPreviousStatus(status) {
+            const flow = ['Pendente', 'Aguardando', 'Integrando', 'Concluido'];
+            const idx = flow.indexOf(status);
+            if (idx > 0) return flow[idx - 1];
+            if (status === 'Rejeitado') return 'Pendente';
+            return null;
+        }
+
         function renderActions(req) {
+            const prevStatus = getPreviousStatus(req.status);
             return `
                 <div class="action-buttons">
                     <button class="btn-icon btn-view" onclick="viewDetails('${req.id}')" title="Ver Detalhes">👁️</button>
+                    ${prevStatus ? `
+                        <button class="btn-icon btn-secondary" onclick="updateStatus('${req.id}', '${prevStatus}')" title="Voltar etapa">⏪</button>
+                    ` : ''}
                     ${req.status === 'Pendente' ? `
                         <button class="btn-icon btn-approve" onclick="updateStatus('${req.id}', 'Aguardando')" title="Aprovar">✅</button>
                         <button class="btn-icon btn-reject" onclick="updateStatus('${req.id}', 'Rejeitado')" title="Rejeitar">❌</button>
