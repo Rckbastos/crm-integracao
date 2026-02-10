@@ -1586,17 +1586,30 @@
                             <div class="detail-label">Nome do Gateway</div>
                             <div class="detail-value">${escapeHtml(request.gatewayName)}</div>
                         </div>
-                        <div class="detail-item">
+                        ${request.gatewayLogoPath ? `
+                          <div class="detail-item">
                             <div class="detail-label">Logo do Gateway</div>
-                            <div class="detail-value">
-                                ${request.gatewayLogoPath
-                                    ? `<img src="${escapeHtml(request.gatewayLogoPath)}"
-                                           alt="Logo ${escapeHtml(request.gatewayName)}"
-                                           style="max-width: 150px; max-height: 80px; object-fit: contain; margin-top: 8px;" />`
-                                    : '<span>Sem logo</span>'
-                                }
+                            <div class="detail-value" style="display:flex; align-items:center; gap:12px;">
+                              <img src="${escapeHtml(request.gatewayLogoPath)}"
+                                   alt="Logo"
+                                   style="max-width:80px; max-height:50px; object-fit:contain;" />
+                              <a href="${escapeHtml(request.gatewayLogoPath)}"
+                                 download="${escapeHtml(request.gatewayLogoName || 'logo')}"
+                                 style="background: rgba(181,164,114,0.15);
+                                        border: 1px solid rgba(181,164,114,0.4);
+                                        color: #b5a472;
+                                        padding: 6px 14px;
+                                        border-radius: 8px;
+                                        font-size: 13px;
+                                        text-decoration: none;
+                                        display: inline-flex;
+                                        align-items: center;
+                                        gap: 6px;">
+                                ⬇️ Baixar Logo
+                              </a>
                             </div>
-                        </div>
+                          </div>
+                        ` : ''}
                         <div class="detail-item">
                             <div class="detail-label">Nome do Whitelabel</div>
                             <div class="detail-value">${escapeHtml(request.whitelabelName)}</div>
@@ -1725,8 +1738,26 @@
                             </div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label">Documento Anexado</div>
-                            <div class="detail-value">${escapeHtml(request.apiDocFileName || '-')}</div>
+                          <div class="detail-label">Documento Anexado</div>
+                          <div class="detail-value" style="display:flex; align-items:center; gap:12px;">
+                            <span>${escapeHtml(request.apiDocFileName || '-')}</span>
+                            ${request.apiDocFilePath ? `
+                              <a href="${escapeHtml(request.apiDocFilePath)}"
+                                 download="${escapeHtml(request.apiDocFileName || 'documento')}"
+                                 style="background: rgba(181,164,114,0.15);
+                                        border: 1px solid rgba(181,164,114,0.4);
+                                        color: #b5a472;
+                                        padding: 6px 14px;
+                                        border-radius: 8px;
+                                        font-size: 13px;
+                                        text-decoration: none;
+                                        display: inline-flex;
+                                        align-items: center;
+                                        gap: 6px;">
+                                ⬇️ Baixar Documento
+                              </a>
+                            ` : ''}
+                          </div>
                         </div>
                     </div>
                 </div>
