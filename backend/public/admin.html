@@ -448,11 +448,17 @@
         }
 
         .btn-icon,
-        .status-badge,
         .payment-badge,
         .badge,
         .stat-icon {
             filter: url(#glass);
+        }
+
+        .status-badge-wrapper {
+            display: inline-block;
+            filter: url(#glass);
+            border-radius: 20px;
+            overflow: visible;
         }
 
         .btn-view {
@@ -773,7 +779,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content antialiased">
         <div class="header">
             <div>
                 <h1>Solicitações de Integração</h1>
@@ -801,7 +807,7 @@
 
         <!-- Table -->
         <div class="table-container liquid-glass bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden" id="tableContainer">
-            <table>
+            <table class="font-['Roboto'] text-[13px] leading-5">
                 <thead id="tableHead"></thead>
                 <tbody id="tableBody"></tbody>
             </table>
@@ -1086,16 +1092,16 @@
                     { label: 'Gateway', render: (r) => `
                         <div class="gateway-info">
                             <div class="gateway-logo">💳</div>
-                            <div class="gateway-details">
-                                <h4>${escapeHtml(r.gatewayName)}</h4>
-                                <p>${escapeHtml(r.whitelabelName)}</p>
+                            <div class="gateway-details min-w-0">
+                                <h4 class="text-white/85 font-medium leading-5">${escapeHtml(r.gatewayName)}</h4>
+                                <p class="text-white/45 text-[11px] leading-4">${escapeHtml(r.whitelabelName)}</p>
                             </div>
                         </div>
                     ` },
-                    { label: 'Cliente/Parceiro', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
-                    { label: 'Responsável técnico', render: (r) => escapeHtml(r.responsibleName) },
-                    { label: 'Desenvolvedor', render: (r) => escapeHtml(r.developerName) },
-                    { label: 'Data', render: (r) => formatDate(r.createdAt) },
+                    { label: 'Cliente/Parceiro', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.clientName || r.whitelabelName || '-')}</div>` },
+                    { label: 'Responsável técnico', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.responsibleName)}</div>` },
+                    { label: 'Desenvolvedor', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.developerName)}</div>` },
+                    { label: 'Data', render: (r) => `<span class="whitespace-nowrap">${formatDate(r.createdAt)}</span>` },
                     { label: 'Status', render: (r) => renderStatus(r.status) },
                     { label: 'Ações', render: (r) => renderActions(r) }
                 ],
@@ -1119,14 +1125,14 @@
                 ],
                 columns: [
                     { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
-                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
-                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
-                    { label: 'Motivo', render: (r) => escapeHtml(r.waitingReason || '-') },
-                    { label: 'SLA limite', render: (r) => formatDate(r.slaLimit) },
-                    { label: 'Responsável', render: (r) => escapeHtml(r.responsibleName) },
-                    { label: 'Data', render: (r) => formatDate(r.createdAt) },
+                    { label: 'Gateway', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.gatewayName)}</div>` },
+                    { label: 'Cliente', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.clientName || r.whitelabelName || '-')}</div>` },
+                    { label: 'Motivo', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.waitingReason || '-')}</div>` },
+                    { label: 'SLA limite', render: (r) => `<span class="whitespace-nowrap">${formatDate(r.slaLimit)}</span>` },
+                    { label: 'Responsável', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.responsibleName)}</div>` },
+                    { label: 'Data', render: (r) => `<span class="whitespace-nowrap">${formatDate(r.createdAt)}</span>` },
                     { label: 'Ações', render: (r) => `
-                        <div class="action-buttons">
+                        <div class="action-buttons inline-flex items-center gap-2 whitespace-nowrap">
                             <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Integrando')" title="Iniciar Integração">🛠️</button>
                             <button class="btn-icon btn-reject" onclick="requestAdjustment('${r.id}')" title="Solicitar Ajuste">✏️</button>
                             <button 
@@ -1164,15 +1170,15 @@
                 ],
                 columns: [
                     { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
-                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
-                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
-                    { label: 'Ambiente', render: (r) => escapeHtml(r.environment || '-') },
-                    { label: 'Etapa', render: (r) => escapeHtml(r.stage || '-') },
-                    { label: 'Responsável', render: (r) => escapeHtml(r.responsibleName) },
-                    { label: 'Último evento', render: (r) => escapeHtml(r.lastEvent || '-') },
+                    { label: 'Gateway', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.gatewayName)}</div>` },
+                    { label: 'Cliente', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.clientName || r.whitelabelName || '-')}</div>` },
+                    { label: 'Ambiente', render: (r) => `<span class="whitespace-nowrap">${escapeHtml(r.environment || '-')}</span>` },
+                    { label: 'Etapa', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.stage || '-')}</div>` },
+                    { label: 'Responsável', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.responsibleName)}</div>` },
+                    { label: 'Último evento', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.lastEvent || '-')}</div>` },
                     { label: 'Status', render: (r) => renderStatus(r.status) },
                     { label: 'Ações', render: (r) => `
-                        <div class="action-buttons">
+                        <div class="action-buttons inline-flex items-center gap-2 whitespace-nowrap">
                             <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Concluido')" title="Concluir">✅</button>
                             <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver logs">🧾</button>
                             <button 
@@ -1209,14 +1215,14 @@
                 ],
                 columns: [
                     { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
-                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
-                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
-                    { label: 'Tipo integração', render: (r) => escapeHtml(r.integrationType || '-') },
-                    { label: 'Ambiente', render: (r) => escapeHtml(r.environment || '-') },
-                    { label: 'Data conclusão', render: (r) => formatDate(r.concluidoAt) },
-                    { label: 'SLA atendido', render: (r) => r.slaMet ? 'Sim' : 'Não' },
+                    { label: 'Gateway', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.gatewayName)}</div>` },
+                    { label: 'Cliente', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.clientName || r.whitelabelName || '-')}</div>` },
+                    { label: 'Tipo integração', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.integrationType || '-')}</div>` },
+                    { label: 'Ambiente', render: (r) => `<span class="whitespace-nowrap">${escapeHtml(r.environment || '-')}</span>` },
+                    { label: 'Data conclusão', render: (r) => `<span class="whitespace-nowrap">${formatDate(r.concluidoAt)}</span>` },
+                    { label: 'SLA atendido', render: (r) => `<span class="whitespace-nowrap">${r.slaMet ? 'Sim' : 'Não'}</span>` },
                     { label: 'Ações', render: (r) => `
-                        <div class="action-buttons">
+                        <div class="action-buttons inline-flex items-center gap-2 whitespace-nowrap">
                             <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver detalhes">👁️</button>
                             <button class="btn-icon btn-approve" onclick="duplicateIntegration('${r.id}')" title="Duplicar">📄</button>
                             <button 
@@ -1254,13 +1260,13 @@
                 ],
                 columns: [
                     { label: 'ID', render: (r) => `<strong>${escapeHtml(r.id)}</strong>` },
-                    { label: 'Gateway', render: (r) => escapeHtml(r.gatewayName) },
-                    { label: 'Cliente', render: (r) => escapeHtml(r.clientName || r.whitelabelName || '-') },
-                    { label: 'Motivo rejeição', render: (r) => escapeHtml(r.rejectionReason || '-') },
-                    { label: 'Responsável decisão', render: (r) => escapeHtml(r.decisionBy || '-') },
-                    { label: 'Data', render: (r) => formatDate(r.createdAt) },
+                    { label: 'Gateway', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.gatewayName)}</div>` },
+                    { label: 'Cliente', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.clientName || r.whitelabelName || '-')}</div>` },
+                    { label: 'Motivo rejeição', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.rejectionReason || '-')}</div>` },
+                    { label: 'Responsável decisão', render: (r) => `<div class="min-w-0 truncate">${escapeHtml(r.decisionBy || '-')}</div>` },
+                    { label: 'Data', render: (r) => `<span class="whitespace-nowrap">${formatDate(r.createdAt)}</span>` },
                     { label: 'Ações', render: (r) => `
-                        <div class="action-buttons">
+                        <div class="action-buttons inline-flex items-center gap-2 whitespace-nowrap">
                             <button class="btn-icon btn-view" onclick="viewDetails('${r.id}')" title="Ver">👁️</button>
                             <button class="btn-icon btn-approve" onclick="reviewRequest('${r.id}')" title="Revisar">🔍</button>
                             <button class="btn-icon btn-approve" onclick="updateStatus('${r.id}', 'Pendente')" title="Reabrir">♻️</button>
@@ -1514,12 +1520,20 @@
             emptyState.style.display = 'none';
             thead.innerHTML = `
                 <tr class="bg-white/5 border-b border-white/10">
-                    ${view.columns.map(col => `<th class="text-xs font-semibold text-gold uppercase tracking-wide px-4 py-3">${col.label}</th>`).join('')}
+                    ${view.columns.map(col => {
+                        const nowrapCols = ['ID', 'Data', 'Status', 'Ações', 'SLA limite', 'Data conclusão', 'SLA atendido'];
+                        const nowrapClass = nowrapCols.includes(col.label) ? 'whitespace-nowrap' : '';
+                        return `<th class="font-['Montserrat'] px-4 py-3 text-[11px] leading-4 font-semibold tracking-wider uppercase text-gold/90 ${nowrapClass}">${col.label}</th>`;
+                    }).join('')}
                 </tr>
             `;
             tbody.innerHTML = rows.map(row => `
                 <tr class="hover:bg-white/5 transition">
-                    ${view.columns.map(col => `<td class="px-4 py-3 text-sm text-white/80">${col.render(row)}</td>`).join('')}
+                    ${view.columns.map(col => {
+                        const nowrapCols = ['ID', 'Data', 'Status', 'Ações', 'SLA limite', 'Data conclusão', 'SLA atendido'];
+                        const nowrapClass = nowrapCols.includes(col.label) ? 'whitespace-nowrap' : '';
+                        return `<td class="px-4 py-3 text-[13px] leading-5 text-white/80 align-middle ${nowrapClass}">${col.render(row)}</td>`;
+                    }).join('')}
                 </tr>
             `).join('');
         }
@@ -1544,7 +1558,7 @@
                 'Concluido': 'status-approved',
                 'Rejeitado': 'status-rejected'
             }[status] || 'status-pending';
-            return `<span class="status-badge ${statusClass}">${escapeHtml(formatStatus(status))}</span>`;
+            return `<div class="status-badge-wrapper"><span class="status-badge ${statusClass} inline-flex items-center leading-none whitespace-nowrap">${escapeHtml(formatStatus(status))}</span></div>`;
         }
 
         function getPreviousStatus(status) {
