@@ -17,65 +17,59 @@
             }
         }
     </script>
-    <style>
-        .success-message { display: none; }
-        .success-message.show { display: block; }
-        .modal { display: none; }
-        .modal.show { display: flex; }
-    </style>
 </head>
 <body class="bg-[#0a0a0a] text-white min-h-screen px-4 py-6 font-sans">
-    <div class="container max-w-3xl mx-auto">
-        <div class="header text-center mb-10 p-10 bg-gold/10 border border-gold/20 rounded-2xl">
-            <div class="logo w-48 h-48 mx-auto mb-5 flex items-center justify-center">
+    <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-10 bg-gradient-to-br from-white/[0.08] via-white/[0.03] to-black/20 backdrop-blur-xl border-b border-white/10 p-6 rounded-2xl">
+            <div class="w-48 h-48 mx-auto mb-5 flex items-center justify-center">
                 <img src="/pegasus-logo.jpg" alt="Pegasus Checkout Logo" class="w-full h-full object-contain mix-blend-lighten brightness-110 contrast-110">
             </div>
-            <h1 class="text-2xl md:text-3xl font-bold text-white mb-2">Pegasus Checkout</h1>
-            <p class="subtitle text-sm text-gray-400">Solicite a integração do seu gateway de pagamento com o checkout mais avançado do mercado</p>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent mb-2">Pegasus Checkout</h1>
+            <p class="text-sm text-gray-400">Solicite a integração do seu gateway de pagamento com o checkout mais avançado do mercado</p>
         </div>
 
-        <div class="success-message rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 mb-5 text-center text-emerald-400" id="successMessage">
+        <div class="hidden rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 mb-5 text-center text-emerald-400" id="successMessage">
             ✅ Solicitação enviada com sucesso! Entraremos em contato em breve.
         </div>
 
-        <div class="modal fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-5" id="messageModal">
-            <div class="modal-content bg-[#121212] border border-white/10 rounded-2xl p-6 w-full max-w-md">
-                <div class="modal-header flex items-center justify-between mb-4">
+        <div class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 items-center justify-center p-5" id="messageModal">
+            <div class="bg-gradient-to-br from-white/[0.08] via-white/[0.03] to-black/20 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 p-8 max-w-md w-full">
+                <div class="flex items-center justify-between mb-4">
                     <h2 id="messageModalTitle" class="text-lg text-gold">Mensagem</h2>
-                    <button class="close-btn w-8 h-8 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition" onclick="closeMessageModal()">✕</button>
+                    <button class="w-8 h-8 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition" onclick="closeMessageModal()">✕</button>
                 </div>
                 <div id="messageModalBody"></div>
-                <div class="modal-actions mt-4 flex justify-end gap-2" id="messageModalActions"></div>
+                <div class="mt-4 flex justify-end gap-2" id="messageModalActions"></div>
             </div>
         </div>
 
         <!-- Liquid glass: gradient + blur + border translúcido -->
-        <form id="integrationForm" class="form-card bg-gradient-to-br from-white/[0.08] via-white/[0.03] to-black/20 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 p-8">
+        <form id="integrationForm" class="bg-gradient-to-br from-white/[0.08] via-white/[0.03] to-black/20 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl shadow-black/50 p-8">
             <!-- Gateway Information -->
-            <div class="form-section mb-10">
-                <h3 class="section-title text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
                     <span>💳</span>
                     Informações do Gateway
                 </h3>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Nome do Gateway <span class="text-red-500 ml-1">*</span></label>
                     <input type="text" id="gatewayName" required placeholder="Ex: MercadoPago, PagSeguro, Stripe..." class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                 </div>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Logo do Gateway <span class="text-red-500 ml-1">*</span></label>
-                    <div class="file-upload w-full">
+                    <div class="w-full">
                         <input type="file" id="gatewayLogo" accept="image/*" required class="hidden">
-                        <label for="gatewayLogo" class="file-upload-label flex items-center justify-center gap-2 p-5 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer transition hover:border-gold/40 text-center">
+                        <label for="gatewayLogo" class="flex items-center justify-center gap-2 p-5 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer transition hover:border-gold/40 text-center">
                             <span>📤</span>
                             <span>Clique para fazer upload da logo (PNG, JPG, SVG)</span>
                         </label>
-                        <div class="file-name mt-2 text-sm text-gold" id="logoFileName"></div>
+                        <div class="mt-2 text-sm text-gold" id="logoFileName"></div>
                     </div>
                 </div>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Nome do Whitelabel <span class="text-red-500 ml-1">*</span></label>
                     <input type="text" id="whitelabelName" required placeholder="Nome da sua marca/empresa" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                     <p class="text-gray-500 text-xs mt-1.5">Nome que aparecerá no checkout para seus clientes</p>
@@ -83,24 +77,24 @@
             </div>
 
             <!-- Responsible Person -->
-            <div class="form-section mb-10">
-                <h3 class="section-title text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
                     <span>👤</span>
                     Responsável pelo Gateway
                 </h3>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Nome Completo <span class="text-red-500 ml-1">*</span></label>
                     <input type="text" id="responsibleName" required placeholder="Nome completo do responsável" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                 </div>
 
-                <div class="contact-grid grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div class="form-group mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="mb-6">
                         <label class="block mb-2 text-sm font-medium text-gray-400">E-mail <span class="text-red-500 ml-1">*</span></label>
                         <input type="email" id="responsibleEmail" required placeholder="email@empresa.com" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                     </div>
 
-                    <div class="form-group mb-6">
+                    <div class="mb-6">
                         <label class="block mb-2 text-sm font-medium text-gray-400">Telefone/WhatsApp <span class="text-red-500 ml-1">*</span></label>
                         <input type="tel" id="responsiblePhone" required placeholder="(00) 00000-0000" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                     </div>
@@ -108,26 +102,26 @@
             </div>
 
             <!-- Developer Contact (Priority) -->
-            <div class="form-section mb-10">
-                <h3 class="section-title text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
                     <span>👨‍💻</span>
                     Contato do Desenvolvedor
-                    <span class="priority-label ml-2 text-xs font-semibold uppercase tracking-wide text-white bg-gradient-to-br from-red-500 to-red-600 px-2 py-0.5 rounded-md">⚠️ Prioritário</span>
+                    <span class="ml-2 text-xs font-semibold uppercase tracking-wide text-white bg-gradient-to-br from-red-500 to-red-600 px-2 py-0.5 rounded-md">⚠️ Prioritário</span>
                 </h3>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Nome do Desenvolvedor <span class="text-red-500 ml-1">*</span></label>
                     <input type="text" id="developerName" required placeholder="Nome completo do desenvolvedor" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                     <p class="text-gray-500 text-xs mt-1.5">Contato direto para evitar atrasos no prazo de integração</p>
                 </div>
 
-                <div class="contact-grid grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div class="form-group mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="mb-6">
                         <label class="block mb-2 text-sm font-medium text-gray-400">E-mail do Desenvolvedor <span class="text-red-500 ml-1">*</span></label>
                         <input type="email" id="developerEmail" required placeholder="dev@empresa.com" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                     </div>
 
-                    <div class="form-group mb-6">
+                    <div class="mb-6">
                         <label class="block mb-2 text-sm font-medium text-gray-400">Telefone/WhatsApp <span class="text-red-500 ml-1">*</span></label>
                         <input type="tel" id="developerPhone" required placeholder="(00) 00000-0000" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                     </div>
@@ -135,63 +129,63 @@
             </div>
 
             <!-- API Documentation -->
-            <div class="form-section mb-10">
-                <h3 class="section-title text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
                     <span>📚</span>
                     Documentação Técnica
                 </h3>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Documentação de API <span class="text-red-500 ml-1">*</span></label>
-                    <div class="file-upload w-full">
+                    <div class="w-full">
                         <input type="file" id="apiDocumentation" accept=".pdf,.doc,.docx,.txt" class="hidden">
-                        <label for="apiDocumentation" class="file-upload-label flex items-center justify-center gap-2 p-5 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer transition hover:border-gold/40 text-center">
+                        <label for="apiDocumentation" class="flex items-center justify-center gap-2 p-5 bg-white/[0.03] border border-white/10 rounded-lg cursor-pointer transition hover:border-gold/40 text-center">
                             <span>📄</span>
                             <span>Upload da documentação (PDF, DOC, TXT) ou cole a URL abaixo</span>
                         </label>
-                        <div class="file-name mt-2 text-sm text-gold" id="docFileName"></div>
+                        <div class="mt-2 text-sm text-gold" id="docFileName"></div>
                     </div>
                 </div>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">URL da Documentação (alternativa ao upload)</label>
                     <input type="url" id="apiDocUrl" placeholder="https://docs.gateway.com/api" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all">
                 </div>
             </div>
 
             <!-- Payment Methods -->
-            <div class="form-section mb-10">
-                <h3 class="section-title text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
                     <span>💰</span>
                     Meios de Pagamento Suportados
                 </h3>
 
-                <div class="checkbox-group grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-                    <div class="checkbox-item flex items-center gap-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                    <div class="flex items-center gap-3">
                         <input type="checkbox" id="pix" name="paymentMethods" value="PIX" class="h-5 w-5 accent-gold">
                         <label for="pix" class="text-sm text-gray-400">PIX</label>
                     </div>
-                    <div class="checkbox-item flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                         <input type="checkbox" id="boleto" name="paymentMethods" value="Boleto" class="h-5 w-5 accent-gold">
                         <label for="boleto" class="text-sm text-gray-400">Boleto</label>
                     </div>
-                    <div class="checkbox-item flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                         <input type="checkbox" id="creditCard" name="paymentMethods" value="Cartão de Crédito" class="h-5 w-5 accent-gold">
                         <label for="creditCard" class="text-sm text-gray-400">Cartão de Crédito</label>
                     </div>
-                    <div class="checkbox-item flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                         <input type="checkbox" id="debitCard" name="paymentMethods" value="Cartão de Débito" class="h-5 w-5 accent-gold">
                         <label for="debitCard" class="text-sm text-gray-400">Cartão de Débito</label>
                     </div>
-                    <div class="checkbox-item flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                         <input type="checkbox" id="transfer" name="paymentMethods" value="Transferência" class="h-5 w-5 accent-gold">
                         <label for="transfer" class="text-sm text-gray-400">Transferência</label>
                     </div>
-                    <div class="checkbox-item flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                         <input type="checkbox" id="crypto" name="paymentMethods" value="Criptomoedas" class="h-5 w-5 accent-gold">
                         <label for="crypto" class="text-sm text-gray-400">Criptomoedas</label>
                     </div>
-                    <div class="checkbox-item flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                         <input type="checkbox" id="other" name="paymentMethods" value="Outros" class="h-5 w-5 accent-gold">
                         <label for="other" class="text-sm text-gray-400">Outros</label>
                     </div>
@@ -199,19 +193,19 @@
             </div>
 
             <!-- API Keys -->
-            <div class="form-section mb-10">
-                <h3 class="section-title text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold text-white mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
                     <span>🔑</span>
                     Credenciais para Testes
                 </h3>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Chaves de API Sandbox <span class="text-red-500 ml-1">*</span></label>
                     <textarea id="sandboxKeys" required placeholder="Cole aqui as chaves de API do ambiente de testes (Sandbox)&#10;&#10;Exemplo:&#10;API Key: sk_test_xxxxxxxxx&#10;Public Key: pk_test_xxxxxxxxx&#10;Secret: xxxxxxxxxxxxx" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all min-h-[100px] resize-y"></textarea>
                     <p class="text-gray-500 text-xs mt-1.5">Ambiente de testes para validar a integração</p>
                 </div>
 
-                <div class="form-group mb-6">
+                <div class="mb-6">
                     <label class="block mb-2 text-sm font-medium text-gray-400">Conta de Produção para Testes (alternativa)</label>
                     <textarea id="productionAccount" placeholder="Caso não tenha Sandbox, forneça credenciais de uma conta de produção para testes&#10;&#10;Usuário:&#10;Senha:&#10;Outras informações:" class="w-full bg-[#1f1f1f] backdrop-blur-sm border border-white/10 text-white placeholder:text-gray-500 focus:border-gold/50 focus:ring-2 focus:ring-gold/20 rounded-lg px-4 py-3 transition-all min-h-[100px] resize-y"></textarea>
                     <p class="text-gray-500 text-xs mt-1.5">Apenas se não houver ambiente Sandbox disponível</p>
@@ -229,7 +223,7 @@
     </script>
     <script>
         function closeMessageModal() {
-            document.getElementById('messageModal').classList.remove('show');
+            document.getElementById('messageModal').classList.add('hidden');
         }
 
         function showMessageModal(title, message) {
@@ -238,7 +232,7 @@
             document.getElementById('messageModalActions').innerHTML = `
                 <button class="bg-gradient-to-r from-gold to-gold-light hover:from-gold-light hover:to-gold text-black font-semibold rounded-lg px-6 py-3 shadow-lg shadow-gold/20 transition-all duration-300" style="margin:0; width:auto;" onclick="closeMessageModal()">OK</button>
             `;
-            document.getElementById('messageModal').classList.add('show');
+            document.getElementById('messageModal').classList.remove('hidden');
         }
 
         // File upload handlers
@@ -326,7 +320,7 @@
             }
 
             // Show success message
-            document.getElementById('successMessage').classList.add('show');
+            document.getElementById('successMessage').classList.remove('hidden');
             
             // Reset form
             this.reset();
@@ -338,7 +332,7 @@
 
             // Hide success message after 5 seconds
             setTimeout(() => {
-                document.getElementById('successMessage').classList.remove('show');
+                document.getElementById('successMessage').classList.add('hidden');
             }, 5000);
         });
 
